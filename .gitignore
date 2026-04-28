@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# materiały referencyjne użytkownika — nie do commitowania (copyright / prywatne)
+/Introduction-to-Robotics-Craig.pdf
+/Wykład*.pdf
+/327736_inz.pdf
+/Zrzut ekranu*
+*.pdf
+# wygenerowane PDF-y z docs/*.md — nie commitujemy, bo regenerowalne
+!docs/pdf/.gitkeep
+/docs/pdf/*.pdf
+

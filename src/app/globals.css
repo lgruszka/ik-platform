@@ -1,26 +1,117 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --panel: #ffffff;
+  --panel-border: #e5e5e5;
+  --muted: #6b7280;
+  --accent: #0b5ed7;
+  --accent-muted: #e7f0ff;
+  --code-bg: #f4f4f5;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #f4f4f5;
+    --panel: #111113;
+    --panel-border: #26262b;
+    --muted: #a1a1aa;
+    --accent: #60a5fa;
+    --accent-muted: #0c2340;
+    --code-bg: #18181b;
   }
 }
 
-body {
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-panel-border: var(--panel-border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-muted: var(--accent-muted);
+  --color-code-bg: var(--code-bg);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html, body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+}
+
+.prose-ik h1 { font-size: 1.875rem; font-weight: 600; margin: 0 0 1rem; letter-spacing: -0.02em; }
+.prose-ik h2 { font-size: 1.375rem; font-weight: 600; margin: 2rem 0 0.75rem; letter-spacing: -0.015em; }
+.prose-ik h3 { font-size: 1.125rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+.prose-ik p  { line-height: 1.7; margin: 0.75rem 0; color: var(--foreground); }
+.prose-ik ul { padding-left: 1.25rem; line-height: 1.7; list-style: disc; }
+.prose-ik ol { padding-left: 1.25rem; line-height: 1.7; list-style: decimal; }
+.prose-ik li { margin: 0.25rem 0; }
+.prose-ik code {
+  font-family: var(--font-geist-mono), var(--mono);
+  background: var(--code-bg);
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+.prose-ik pre {
+  font-family: var(--font-geist-mono), var(--mono);
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  line-height: 1.55;
+  font-size: 0.875rem;
+}
+.prose-ik pre code { background: transparent; padding: 0; }
+.prose-ik blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.25rem 1rem;
+  margin: 1rem 0;
+  color: var(--muted);
+  background: var(--accent-muted);
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+.prose-ik table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.prose-ik th, .prose-ik td {
+  border: 1px solid var(--panel-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.prose-ik th { background: var(--code-bg); font-weight: 600; }
+
+.katex-block {
+  display: block;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.step-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--accent-muted);
+  border-radius: 0.5rem 0.5rem 0 0;
+  border-bottom: 2px solid var(--accent);
+}
+.step-header .step-num {
+  font-family: var(--font-geist-mono), var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
 }
