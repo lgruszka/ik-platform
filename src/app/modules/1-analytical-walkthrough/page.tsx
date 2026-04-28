@@ -28,20 +28,56 @@ export default function Module1() {
             końcówka narzędzia (TCP) znalazła się w zadanym punkcie z zadaną
             orientacją. Zrobimy to <strong>analitycznie</strong> — czyli
             podamy jawne wzory algebraiczne, bez iteracji i bez szukania
-            numerycznego. Dla Pumy jest to możliwe dzięki szczególnej własności
-            geometrycznej: osie trzech ostatnich przegubów (<M tex="q_4" />,{" "}
-            <M tex="q_5" />, <M tex="q_6" />) przecinają się w jednym punkcie —
-            <strong> środku nadgarstka</strong>. Taka własność nazywa się{" "}
-            <em>warunkiem Piepera</em>.
+            numerycznego. Dla Pumy jest to wyjątkowo proste dzięki szczególnej
+            własności geometrycznej: osie trzech ostatnich przegubów
+            (<M tex="q_4" />, <M tex="q_5" />, <M tex="q_6" />) przecinają się w
+            jednym punkcie — <strong>środku nadgarstka</strong>. Ta własność jest
+            jedną z form <em>warunku Piepera</em> (Pieper 1968).
           </p>
+          <div className="rounded-lg border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/20 px-4 py-3 my-4 text-sm">
+            <p className="font-semibold mb-1">Warunek Piepera — wystarczający, nie konieczny</p>
+            <p className="text-[var(--muted)] mb-2">
+              W literaturze (i często w skryptach uczelnianych) pada teza, że
+              „rozwiązanie analityczne istnieje wtedy i tylko wtedy, gdy spełniony
+              jest warunek Piepera". To <strong>nieprawda</strong>. Pieper pokazał
+              jedynie, że jeśli trzy kolejne osie (a) przecinają się w jednym
+              punkcie <em>albo</em> (b) są wzajemnie równoległe, to istnieje
+              rozwiązanie zamknięte z dekompozycji 3+3.
+            </p>
+            <p className="text-[var(--muted)] mb-2">
+              <strong>Kontrprzykłady:</strong>
+            </p>
+            <ul className="text-[var(--muted)] list-disc pl-5 space-y-1">
+              <li>
+                <strong>UR5/UR10</strong> (Universal Robots) — wrist nie zbiega
+                w punkcie (przesunięcie <M tex="d_5" /> niezerowe), więc
+                klasyczna „forma A" Piepera nie jest spełniona. Ale q₂, q₃, q₄
+                są wzajemnie równoległe → spełnia formę B i ma rozwiązanie
+                zamknięte (Hawkins 2013, Kufieta 2014).
+              </li>
+              <li>
+                Manipulatory <strong>nie spełniające żadnej z form</strong>{" "}
+                czasem także mają zamkniętą formę — przez ogólniejsze metody
+                (Raghavan–Roth, redukcja do równania 16. stopnia). Trudniejszą
+                geometrycznie, ale wciąż <em>nie</em> iteracyjną.
+              </li>
+            </ul>
+            <p className="text-[var(--muted)] mt-2">
+              Praktycznie każdy 6-DOF stosowany dziś w przemyśle (Puma, Stäubli,
+              KUKA, ABB, Fanuc, UR) ma analityczne IK — bo producenci celowo
+              projektują geometrię, by upraszczała wyprowadzenie. Dlatego
+              analityczne IK <em>nie</em> jest egzotyką ani ograniczone do
+              archaicznych konstrukcji.
+            </p>
+          </div>
           <p>
-            Kiedy warunek Piepera jest spełniony, 6-wymiarowe zadanie rozpada się
-            na dwa łatwiejsze podproblemy 3-wymiarowe: najpierw wyznaczamy
-            <M tex="q_1, q_2, q_3" />, żeby środek nadgarstka trafił w
-            odpowiednie miejsce w przestrzeni, a potem <M tex="q_4, q_5, q_6" />,
-            żeby narzędzie miało żądaną orientację. Cały rachunek sprowadza się
-            do kilku zastosowań twierdzenia cosinusów i funkcji{" "}
-            <code>atan2</code>.
+            Wracając do Pumy: warunek Piepera (forma A) sprawia, że 6-wymiarowe
+            zadanie rozpada się na dwa łatwiejsze podproblemy 3-wymiarowe —
+            najpierw wyznaczamy <M tex="q_1, q_2, q_3" />, żeby środek
+            nadgarstka trafił w odpowiednie miejsce w przestrzeni, a potem{" "}
+            <M tex="q_4, q_5, q_6" />, żeby narzędzie miało żądaną orientację.
+            Cały rachunek sprowadza się do kilku zastosowań twierdzenia cosinusów
+            i funkcji <code>atan2</code>.
           </p>
           <PieperSchematic />
         </section>
@@ -270,7 +306,7 @@ export default function Module1() {
           </div>
         </section>
 
-        <StepPanel number={0} title="Odseparowanie pozycji od orientacji (warunek Piepera)">
+        <StepPanel number={0} title="Odseparowanie pozycji od orientacji (dekompozycja wristowa)">
           <p>
             Zadana poza efektora to macierz transformacji jednorodnej{" "}
             <M tex="4\times 4" /> — górne <M tex="3\times 3" /> to orientacja
@@ -903,9 +939,10 @@ if (sq5_abs < eps) {
             pokazująca, jak gałęzie „znikają" przy przekraczaniu granic
             osiągalności. Moduły 3 i 4 pokazują alternatywne strategie
             rozwiązania — numeryczne (Jakobian, optymalizacja) — które są
-            wolniejsze i mniej dokładne, ale działają dla{" "}
-            <em>każdego</em> manipulatora, nie tylko spełniającego warunek
-            Piepera.
+            wolniejsze i mniej dokładne, ale za to <em>uniwersalne</em>: nie
+            wymagają ręcznego wyprowadzania wzorów dla każdej rodziny robotów
+            i działają dla dowolnej geometrii (także tych, dla których
+            zamknięta forma byłaby trudna do wyprowadzenia).
           </p>
         </section>
       </div>

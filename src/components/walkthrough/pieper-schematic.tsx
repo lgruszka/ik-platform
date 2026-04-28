@@ -90,7 +90,7 @@ export function PieperSchematic() {
         {/* Opis — dolne wyjaśnienie */}
         <g transform={`translate(24, ${H - 72})`}>
           <rect x={0} y={0} width={W - 48} height={60} fill="#f8fafc" stroke="#e5e7eb" rx={6} />
-          <text x={10} y={18} fontSize={11} fill="#334155" fontFamily="system-ui" fontWeight={600}>Warunek Piepera (spełniony dla Puma560):</text>
+          <text x={10} y={18} fontSize={11} fill="#334155" fontFamily="system-ui" fontWeight={600}>Forma A warunku Piepera (spełniona dla Puma560):</text>
           <text x={10} y={34} fontSize={11} fill="#334155" fontFamily="system-ui">Trzy kolejne osie obrotu q₄, q₅, q₆ przecinają się w jednym punkcie — środku nadgarstka.</text>
           <text x={10} y={50} fontSize={11} fill="#334155" fontFamily="system-ui">W efekcie: pozycja środka zależy tylko od q₁, q₂, q₃, a orientacja efektora — od q₄, q₅, q₆.</text>
         </g>

@@ -17,13 +17,25 @@ export default function Module3() {
         <section className="prose-ik">
           <h2>Dlaczego nie zamkniętą formułą?</h2>
           <p>
-            Metoda analityczna (moduły 1–2) daje dokładne rozwiązanie — ale
-            tylko dla robotów spełniających warunek Piepera. Nowoczesne
-            manipulatory 7-DOF (KUKA LBR iiwa, Franka Panda), koboty z
-            nietypową geometrią czy roboty chirurgiczne często tego warunku{" "}
-            <em>nie spełniają</em>. Wyprowadzenie zamkniętych wzorów staje się
-            algebraicznym koszmarem — a w granicznych przypadkach zamknięte
-            rozwiązanie po prostu nie istnieje w klasie funkcji elementarnych.
+            Metoda analityczna (moduły 1–2) daje dokładne rozwiązanie i jest
+            właściwym wyborem, gdy znamy zamkniętą formę dla danej geometrii —
+            np. Puma 560 (forma A Piepera) czy UR5 (forma B). Schody zaczynają
+            się gdy: (a) <strong>manipulator ma 7+ DOF</strong> — wtedy IK ma
+            nieskończenie wiele rozwiązań i potrzeba dodatkowych kryteriów
+            (Franka Panda, KUKA LBR iiwa); (b) używamy{" "}
+            <strong>nietypowej geometrii bez gotowego wyprowadzenia</strong> —
+            roboty chirurgiczne, prototypy, custom mechanizmy; (c){" "}
+            <strong>uczenie się dynamicznie zmienia model</strong> (np. estymacja
+            online długości ogniw przy soft-robotach).
+          </p>
+          <p>
+            Dla typowych przemysłowych 6-DOF rozwiązanie zamknięte zawsze
+            istnieje (Raghavan–Roth dowodzą, że dowolny 6-DOF ma co najwyżej 16
+            rzeczywistych rozwiązań i wszystkie da się wyznaczyć analitycznie),
+            ale w praktyce <em>jego wyprowadzenie</em> bywa pracochłonne.
+            Solvery numeryczne dają rozwiązanie „od ręki" dla dowolnej geometrii
+            podanej tabelą DH — bez ręcznej algebry, bez zgadywania struktury
+            wzorów. To czyni je domyślną opcją w prototypowaniu.
           </p>
           <p>
             Potrzebujemy więc solverów <em>numerycznych</em> — działających dla

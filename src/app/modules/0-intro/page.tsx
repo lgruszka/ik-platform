@@ -130,9 +130,9 @@ export default function Module0() {
             <tbody>
               <tr>
                 <td>Analityczne (zamknięte)</td>
-                <td>Pieper, Paul, PoE / Paden-Kahan</td>
+                <td>Pieper, Paul, PoE / Paden-Kahan, Raghavan-Roth</td>
                 <td>Dokładne, szybkie (µs), wszystkie rozwiązania</td>
-                <td>Nie każdy robot spełnia warunek Piepera</td>
+                <td>Wymagają ręcznego wyprowadzenia dla każdej rodziny robotów; trudniejsze geometrie wymagają zaawansowanych metod (rezultanty, równanie 16. stopnia)</td>
               </tr>
               <tr>
                 <td>Jakobianowe (iteracyjne)</td>

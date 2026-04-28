@@ -14,8 +14,8 @@
 Po wykładzie student potrafi:
 
 1. Sformułować problem IK jako zadanie odwrócenia odwzorowania `f: Q → SE(3)`.
-2. Rozpoznać, kiedy istnieje rozwiązanie zamknięte (warunek Piepera).
-3. Wyprowadzić samodzielnie wzory na `q₁, q₂, q₃` z pozycji środka nadgarstka dla manipulatora spełniającego warunek Piepera.
+2. Rozpoznać dwie formy warunku Piepera (osie przecinające się / równoległe) i wiedzieć, że są one **wystarczające, ale nie konieczne** dla istnienia rozwiązania zamkniętego — przykład UR5.
+3. Wyprowadzić samodzielnie wzory na `q₁, q₂, q₃` z pozycji środka nadgarstka dla manipulatora spełniającego formę A warunku Piepera (Puma).
 4. Wydobyć `q₄, q₅, q₆` z macierzy `R₃⁶` — rozumie związek z kątami Eulera.
 5. Enumerować osiem gałęzi rozwiązania i rozróżniać kryteria selekcji praktycznej.
 6. Zidentyfikować singularność nadgarstka i wyjaśnić, dlaczego traci się tam stopień swobody.
@@ -106,7 +106,7 @@ IK:  T ↦ q = f⁻¹(T)        — TRUDNE
 
 | Rodzina | Reprezentanci | Plus | Minus |
 |---------|---------------|------|-------|
-| Analityczne | Pieper, Paul | Dokładne, µs, wszystkie rozwiązania | Tylko dla robotów spełniających warunek |
+| Analityczne | Pieper, Paul, Raghavan-Roth | Dokładne, µs, wszystkie rozwiązania | Wymagają ręcznego wyprowadzenia dla każdej rodziny robotów |
 | Jakobianowe | DLS, pinv | Dowolny robot, płynne trajektorie | Singularności, lokalne |
 | Optymalizacyjne | SQP, NM | Elastyczne (dowolne koszty) | Wolne |
 | Data-driven | MLP, IKFlow | Multi-modalne, µs inferencja | Koszt treningu, ekstrapolacja |
@@ -114,7 +114,7 @@ IK:  T ↦ q = f⁻¹(T)        — TRUDNE
 
 **Zapowiedź:**
 
-> „Dziś skupiamy się na pierwszej rodzinie — **analitycznej**. To jest klasa metod, które dają nam dokładne rozwiązanie w czasie stałym, niezależnie od pozycji startowej. Ograniczenie: robot musi spełniać tzw. warunek Piepera."
+> „Dziś skupiamy się na pierwszej rodzinie — **analitycznej**. To jest klasa metod, które dają nam dokładne rozwiązanie w czasie stałym, niezależnie od pozycji startowej. Dla większości manipulatorów 6-DOF stosowanych w przemyśle (Puma, Stäubli, KUKA klasyk, ABB, Fanuc, UR) takie rozwiązanie istnieje — bo producenci celowo projektują geometrię, by upraszczała wyprowadzenie. W tym wykładzie przejdziemy je w detalu dla Pumy 560."
 
 ---
 
@@ -124,9 +124,9 @@ IK:  T ↦ q = f⁻¹(T)        — TRUDNE
 
 **Sformułuj warunek:**
 
-> „Jeżeli trzy kolejne osie obrotu manipulatora przecinają się w jednym punkcie **lub** są wzajemnie równoległe, problem IK ma rozwiązanie zamknięte."
+> „Jeżeli trzy kolejne osie obrotu manipulatora przecinają się w jednym punkcie **lub** są wzajemnie równoległe, problem IK ma rozwiązanie zamknięte. To **warunek wystarczający, nie konieczny** — UR5 nie spełnia formy intersect (offset wrist), ale spełnia formę parallel (3 osie pionowe q₂q₃q₄), więc też ma analityczne IK. Roboty bez żadnej z form mogą mieć rozwiązanie zamknięte przez metodę Raghavana-Rotha (równanie 16. stopnia)."
 
-**Dla Pumy 560:** spełniony. Osie q₄, q₅, q₆ przecinają się w **środku nadgarstka** (ang. *wrist centre*). Nazwijmy ten punkt `p_wc`.
+**Dla Pumy 560:** spełniona forma A. Osie q₄, q₅, q₆ przecinają się w **środku nadgarstka** (ang. *wrist centre*). Nazwijmy ten punkt `p_wc`.
 
 **Kluczowa obserwacja** (pokazać na rysunku):
 
@@ -392,7 +392,7 @@ Po załadowaniu Pyodide: zmień pozę. Obserwuj, że tabele TS i Python zawieraj
 
 **Co dalej (zapowiedź kolejnych wykładów):**
 
-- **Moduł 3 — Metody Jakobianowe.** Co jeśli robot NIE spełnia warunku Piepera? Linearyzujemy FK i iterujemy: Jacobian Transpose, pseudoinwersja, DLS (Levenberg-Marquardt). Standard przemysłowy.
+- **Moduł 3 — Metody Jakobianowe.** Co jeśli wyprowadzenie zamkniętej formuły jest niewykonalne (lub robot ma 7+ DOF, lub geometria często się zmienia)? Linearyzujemy FK i iterujemy: Jacobian Transpose, pseudoinwersja, DLS (Levenberg-Marquardt). Standard przemysłowy.
 - **Moduł 4 — Optymalizacja.** IK jako problem optymalizacji z ograniczeniami. Nelder-Mead, SQP, elastyczne funkcje kosztu.
 - **Moduł 5 — Sieci neuronowe.** IK uczone na danych — MLP, MDN, IKFlow. Kiedy ma sens? Hybryda NN+DLS.
 - **Moduł 7 — Singularności.** Miara manipulacyjności Yoshikawy, elipsoida manipulacyjności, strategie unikania.
@@ -409,7 +409,7 @@ Po załadowaniu Pyodide: zmień pozę. Obserwuj, że tabele TS i Python zawieraj
    → `atan2` zna znaki obu argumentów i zwraca pełne `(−π, π]`; `arctan` gubi ćwiartkę.
 
 2. *Dla robota, który NIE spełnia warunku Piepera — czy istnieje rozwiązanie analityczne?*
-   → Może istnieć (Paden-Kahan subproblems, screw theory), ale wzory stają się ogromne lub w ogóle nie istnieją w postaci elementarnej. W praktyce używa się metod iteracyjnych.
+   → **Często tak** — Pieper jest wystarczający, nie konieczny. UR5 nie ma intersecting wrist, ale ma analityczne IK przez równoległe osie q₂q₃q₄. Raghavan i Roth (1990) pokazali, że dowolny 6-DOF ma co najwyżej 16 rzeczywistych rozwiązań i wszystkie da się wyznaczyć analitycznie przez równanie 16. stopnia. Po prostu wyprowadzenie wymaga wtedy zaawansowanych technik (rezultanty, Sylvester) zamiast geometrii szkolnej. W dydaktyce skupiamy się na formie A Piepera, bo daje najprostsze wyprowadzenie.
 
 3. *Co oznacza „singularność" geometrycznie?*
    → Konfiguracja, w której jakobian traci pełny rząd — istnieje kierunek ruchu TCP, którego nie da się zrealizować dowolnym wyborem `dq/dt`.

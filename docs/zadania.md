@@ -173,27 +173,28 @@ Zadania są uporządkowane od najprostszych (1–3) przez średnio trudne (4–7
 
 ---
 
-## Zadanie 8 — Manipulator 6-DOF bez warunku Piepera
+## Zadanie 8 — Manipulator 6-DOF z naruszoną formą A Piepera
 
 **Poziom:** wymagający
 
-**Cel:** Zrozumieć, dlaczego analityczne IK nie zawsze istnieje — i co wtedy zrobić.
+**Cel:** Zrozumieć granice klasycznej dekompozycji wristowej i pokazać, że jest to **wybór wyprowadzenia, nie warunek istnienia** rozwiązania zamkniętego.
 
-**Treść:** Stwórz hipotetyczny robot 6-DOF, w którym ostatnie trzy osie **NIE** przecinają się w jednym punkcie. Np. dodaj mały offset `d₅ = 0.05 m` do DH (w oryginale `d₅ = 0` dla Pumy).
+**Treść:** Stwórz hipotetyczny wariant Pumy, w którym ostatnie trzy osie **NIE** przecinają się w jednym punkcie — dodaj offset `d₅ = 0.05 m` do tabeli DH (w oryginale `d₅ = 0`). To „złamie" formę A Piepera.
 
-1. Zmodyfikuj `PUMA560` jako `PUMA_NONPIEPER` w `src/lib/robots/puma560.ts`.
-2. Spróbuj uruchomić na nim `solvePuma560Analytical` — co się dzieje? (Odpowiedź: wzory zakładają `d₅ = 0`, więc dadzą wynik niezgodny z FK.)
-3. Uruchom solvery Jakobianowe (`dls`) — czy wciąż działają? Pokaż że tak.
-4. Napisz krótki akapit interpretacyjny: jaka jest cena utraty warunku Piepera?
+1. Zmodyfikuj `PUMA560` jako `PUMA_OFFSET_WRIST` w `src/lib/robots/puma560.ts`.
+2. Spróbuj uruchomić na nim `solvePuma560Analytical` — co się dzieje? (Odpowiedź: wzory zakładają `d₅ = 0`, więc dają wynik niezgodny z FK.) Wyjaśnij, **dlaczego** te konkretne wzory już nie działają — które kroki wyprowadzenia z modułu 1 wymagałyby modyfikacji?
+3. Uruchom na zmienionym robocie solvery Jakobianowe (`dls`) — czy wciąż działają? Pokaż że tak, zmierz ile iteracji potrzebują względem oryginalnej Pumy.
+4. **Bonusowo:** zastanów się i opisz krótko, jakie chwyty geometryczne pozwoliłyby wyprowadzić zamkniętą formułę dla `PUMA_OFFSET_WRIST` (podpowiedź: w UR5 i podobnych robotach z offsetem wrist używa się równania kwadratowego w `q₃` zamiast prostego prawa cosinusów; literatura: Hawkins 2013 "Analytical IK of UR5").
+5. Napisz akapit interpretacyjny: dlaczego producenci celowo projektują geometrię tak, by spełniała formę A lub B Piepera? (odpowiedź: tańsze wyprowadzenie, bardziej kanoniczne wzory, łatwiejsze debugowanie sterownika).
 
 **Pliki:**
 - `src/lib/robots/puma560.ts` (dodanie wariantu)
 - Ewentualnie test w `__smoke.ts`
 - `docs/raport-zad8.md`
 
-**Podpowiedź:** To zadanie jest eksperymentem myślowym. Nie implementujesz nowego analitycznego IK (to byłby duży projekt). Pokazujesz *dlaczego* solvery iteracyjne są ważne.
+**Podpowiedź:** To zadanie ma pokazać, że **analityczne IK dla `PUMA_OFFSET_WRIST` istnieje** — Raghavan i Roth (1990) udowodnili, że dowolny 6-DOF ma co najwyżej 16 rzeczywistych rozwiązań i wszystkie da się wyznaczyć przez równanie 16. stopnia. Tylko że tym razem wyprowadzenie nie idzie tą prostą drogą co dla klasycznej Pumy. Solvery iteracyjne są tu **wygodniejszym narzędziem prototypowania**, nie *jedyną* opcją.
 
-**Kryterium oceny:** Raport porównuje: (a) niepoprawny wynik analitycznego solvera, (b) poprawny wynik DLS, (c) wskazuje ile więcej iteracji potrzebuje DLS niż dla oryginalnej Pumy.
+**Kryterium oceny:** Raport pokazuje (a) niepoprawny wynik gotowego analitycznego solvera (bo wzory zakładały `d₅ = 0`), (b) poprawny wynik DLS, (c) liczbę iteracji DLS porównaną z oryginalną Pumą. Akapit „bonus" wskazuje konkretną technikę wyprowadzenia zamkniętej formuły dla nowej geometrii.
 
 ---
 
@@ -266,7 +267,7 @@ Dla każdej miary:
 | 5 — Tool offset | 20 | średnie |
 | 6 — Trajektoria | 20 | średnie |
 | 7 — Test statystyczny | 20 | średnie |
-| 8 — Bez warunku Piepera | 25 | trudne |
+| 8 — Naruszona forma A Piepera | 25 | trudne |
 | 9 — DLS w Pythonie | 25 | trudne |
 | 10 — Miary selekcji | 30 | trudne |
 

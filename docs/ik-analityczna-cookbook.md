@@ -1,6 +1,8 @@
 # Odwrotna kinematyka analityczna — przepis postępowania
 
-Skondensowana instrukcja krok po kroku, jak wyprowadzić rozwiązanie zamknięte IK dla manipulatora szeregowego 6-DOF spełniającego warunek Piepera, na przykładzie Pumy560. Źródła: Craig *Introduction to Robotics* (wyd. 3, §4.7), praca inżynierska [327736] rozdz. 6.4, implementacja w `src/lib/solvers/analytical-puma560.ts`.
+Skondensowana instrukcja krok po kroku, jak wyprowadzić rozwiązanie zamknięte IK dla manipulatora szeregowego 6-DOF — na przykładzie Pumy560 (forma A warunku Piepera, czyli wrist-decoupling). Ta sama metodologia z drobnymi modyfikacjami stosuje się do robotów z formą B (3 osie równoległe, np. UR5) oraz innych geometrii dających się rozłożyć. Źródła: Craig *Introduction to Robotics* (wyd. 3, §4.7), praca inżynierska [327736] rozdz. 6.4, implementacja w `src/lib/solvers/analytical-puma560.ts`.
+
+> **Uwaga terminologiczna.** Warunek Piepera jest **wystarczający, nie konieczny**. Manipulator nie spełniający żadnej z dwóch klasycznych form (intersect / parallel) wciąż może mieć rozwiązanie zamknięte — Raghavan i Roth (1990) udowodnili, że dowolny 6-DOF ma co najwyżej 16 rzeczywistych rozwiązań i wszystkie da się wyznaczyć przez równanie 16. stopnia. Po prostu wyprowadzenie wymaga wtedy zaawansowanych narzędzi (rezultanty Sylvestera, redukcja Bézoutowska) zamiast geometrii szkolnej.
 
 Dokument jest uzupełnieniem do modułu 1 w aplikacji (`/modules/1-analytical-walkthrough`) i planu wykładu (`plan-wykladu.md`).
 
@@ -39,13 +41,16 @@ T_{i-1}^i = ────────────── · Trans_x(a_{i-1}) · Ro
 
 gdzie `cθ = cos θ_i`, `sθ = sin θ_i`, `cα = cos α_{i-1}`, `sα = sin α_{i-1}`.
 
-### 1.3 Sprawdź warunek Piepera
+### 1.3 Rozpoznaj geometryczne uproszczenia
 
-Wyjrzyj na geometrię robota: **czy trzy kolejne osie obrotu przecinają się w jednym punkcie, albo są wzajemnie równoległe?**
+Wyjrzyj na geometrię robota: **czy trzy kolejne osie obrotu przecinają się w jednym punkcie, albo są wzajemnie równoległe?** To dwie formy warunku Piepera (1968), które **gwarantują** dekompozycję pozycja+orientacja i bardzo upraszczają wyprowadzenie:
 
-Dla Pumy560 osie q₄, q₅, q₆ przecinają się w **środku nadgarstka** (`d₅ = 0`, `a₄ = 0`, `a₅ = 0` → frame 4, 5, 6 współdzielą początek). Warunek Piepera jest spełniony — istnieje rozwiązanie zamknięte.
+- **Forma A — przecinające się osie.** Dla Pumy560 osie q₄, q₅, q₆ przecinają się w **środku nadgarstka** (`d₅ = 0`, `a₄ = 0`, `a₅ = 0` → frame 4, 5, 6 współdzielą początek). Pozycja środka zależy tylko od q₁, q₂, q₃, więc 6-DOF rozkłada się na dwa łatwiejsze 3-DOF.
+- **Forma B — równoległe osie.** Dla UR5 osie q₂, q₃, q₄ są wzajemnie równoległe. W tej rodzinie używa się innego chwytu geometrycznego (rzutowanie na płaszczyznę prostopadłą do wspólnego kierunku osi), dochodzi się również do rozwiązania zamkniętego.
 
-Jeśli warunek nie jest spełniony (np. dla nietypowych 7-DOF manipulatorów): zamiast metody analitycznej użyj iteracyjnej (moduł 3 — Jacobian Transpose, pseudoinwersja, DLS).
+Jeśli **żadna** z form nie jest spełniona — to **nie znaczy**, że rozwiązanie analityczne nie istnieje. Po prostu wyprowadzenie nie idzie najprostszą drogą i wymaga ogólniejszych technik (Raghavan–Roth: redukcja do równania 16. stopnia w jednej zmiennej, rozwiązywalna numerycznie ale wciąż w czasie stałym i z odzyskaniem wszystkich gałęzi). W praktyce tę pracę robi się raz, dla danej rodziny robotów; potem wynik rozprowadza się jako gotowy wzór do użycia online.
+
+W dydaktyce skupiamy się na formie A (Puma) — daje najbardziej kanoniczne wyprowadzenie z geometrii szkolnej. Forma B i przypadek ogólny to materiał na osobne zajęcia. Solvery numeryczne z modułu 3 są **alternatywą wygodniejszą w prototypowaniu** (nie wymagają wyprowadzania), nie zaś jedyną opcją dla geometrii bez Piepera.
 
 ---
 
