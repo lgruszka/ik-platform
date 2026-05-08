@@ -118,6 +118,8 @@ routes=(
   "/modules/6-benchmark"
   "/modules/7-singularities"
   "/modules/8-orientations"
+  "/modules/9-dynamics"
+  "/modules/10-energy"
 )
 
 for r in "${routes[@]}"; do

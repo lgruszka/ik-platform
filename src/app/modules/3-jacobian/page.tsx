@@ -476,6 +476,13 @@ const α    = (e·JJtE) / (JJtE·JJtE);
             singularności — i jak można ją włączyć jako dodatkowy cel
             optymalizacyjny w przestrzeni zerowej jakobianu.
           </p>
+          <p>
+            <strong>Powiązania z dynamiką:</strong> Jakobian w tym module mapuje
+            q̇ → ẋ (pierwsza pochodna). Druga pochodna i siły potrzebne do
+            wytworzenia ruchu to temat <a href="/modules/9-dynamics">modułu 9 (Newton-Euler)</a>:
+            ten sam łańcuch propagacji od bazy do efektora, ale z prędkościami,
+            przyspieszeniami i siłami w każdym ogniwie.
+          </p>
         </section>
       </div>
     </>

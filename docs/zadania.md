@@ -256,6 +256,95 @@ Dla każdej miary:
 
 ---
 
+## Zadanie 11 — Wpływ masy chwytaka na momenty napędowe
+
+**Poziom:** średnie
+
+**Cel:** Zrozumieć, jak ciężar przedmiotu manipulowanego propaguje się przez łańcuch kinematyczny i wpływa na momenty napędowe wszystkich przegubów.
+
+**Treść:** Dla zadania transportu wahadłowego q₂: 0 → π/3 → 0 w ciągu 2 s zmierz:
+1. **Bez chwytaka:** maksymalny moment napędowy w każdym z 6 przegubów ES5.
+2. **Z chwytakiem 1 kg:** to samo dla `m₆ = 0.365 + 1 = 1.365 kg`.
+3. **Z chwytakiem 3 kg:** dla `m₆ = 3.365 kg`.
+
+W każdym przypadku wypisz wartości τ_max,i [Nm] dla i ∈ {1..6}.
+
+Zinterpretuj: który przegub jest najbardziej obciążony przez dodatkowy ciężar? Dlaczego mimo że masę dodaliśmy do ostatniego ogniwa, najwięcej zyskuje τ₂ (przegub barku)? Jaką rolę gra ramię siły? Pokaż obliczeniem na małej kartce, że dla statyki τ₂ ~ m_chwytaka · g · L_ramienia (gdzie L_ramienia ≈ a₃ + a₄ ≈ 0.82 m).
+
+**Pliki:**
+- Modyfikacja smoke testu w `src/lib/dynamics/__smoke.ts` — dodaj scenariusz "chwytak 1/3 kg"
+- `docs/raport-zad11.md` — tabela wyników + 1-2 akapity interpretacji
+
+**Podpowiedź:** Najprościej zrobić to przez nadpisanie `inertia[5].m` w kopii `ES5_INERTIA` przed wywołaniem `solveInverseDynamics`. Tensor `I_C` można pozostawić bez zmian (chwytak jako punktowa masa).
+
+**Kryterium oceny:** Tabela porównawcza, identyfikacja τ₂ jako najbardziej obciążonego, sensowna interpretacja przez ramię siły.
+
+---
+
+## Zadanie 12 — Statyczny vs dynamiczny moment
+
+**Poziom:** średnie
+
+**Cel:** Pokazać, jak wielkość momentu napędowego rozkłada się na **część grawitacyjną** (utrzymanie konfiguracji w polu grawitacji) i **część dynamiczną** (siły Coriolisa, odśrodkowe, bezwładności), w zależności od prędkości ruchu.
+
+**Treść:** Dla tej samej trajektorii q₂: 0 → π/3 → 0 wykonaj **3 wersje** różniące się czasem realizacji:
+- T = 0.5 s (bardzo szybki ruch)
+- T = 2.0 s (umiarkowany ruch)
+- T = 8.0 s (wolny ruch, niemal kvazi-statyczny)
+
+Dla każdego T:
+1. Wyznacz τ₂(t) z pełnej dynamiki (NE z `q̇, q̈ ≠ 0`).
+2. Wyznacz τ₂_grav(t) — z NE z `q̇ = q̈ = 0` (sama statyka, podstaw aktualne `q(t)`).
+3. Wyznacz τ₂_dyn(t) = τ₂ - τ₂_grav.
+4. Naszkicuj wszystkie trzy krzywe na jednym wykresie (możesz użyć `<TorqueChart />` jako wzoru dla nowego komponentu).
+
+**Pytania interpretacyjne:**
+- Dla T = 8.0 s, jak duże są wkłady grawitacyjne vs dynamiczne? (oczekiwane: τ_grav dominuje, τ_dyn ≈ 0)
+- Dla T = 0.5 s? (oczekiwane: τ_dyn dorównuje lub przewyższa τ_grav)
+- Dla jakiego T krzywa τ_max(T) jest najmniejsza? Dlaczego niemonotoniczność?
+
+**Pliki:**
+- Nowy komponent `src/components/dynamics/torque-decomposition-chart.tsx`
+- `docs/raport-zad12.md` — wykresy + interpretacja
+
+**Podpowiedź:** Komponent `<TorqueDisplay />` w `src/components/dynamics/` pokazuje już ten rozkład w postaci tabelarycznej dla pojedynczej chwili — możesz wzbogacić go o czas. Można też po prostu zmodyfikować `<TorqueChart />` żeby pokazywał 3 krzywe (pełne, grawitacja, dynamika) zamiast 6 (po jednej na napęd).
+
+**Kryterium oceny:** Wykresy dla 3 wartości T, identyfikacja zjawiska niemonotoniczności energii w funkcji czasu (wzrost τ_dyn przy małych T, wzrost integralu τ_grav przy dużych T).
+
+---
+
+## Zadanie 13 — Optymalizacja energetyczna trajektorii
+
+**Poziom:** trudne
+
+**Cel:** Zaimplementować prosty algorytm minimalizacji energii cyklu transportowego po parametryzacji czasu trwania trajektorii. Wprowadzenie do tematyki rozdz. 8 dysertacji [Gruszka 2024].
+
+**Treść:** Dla zadania transportu z punktu A = `q_A = (0, 0, 0, 0, 0, 0)` do B = `q_B = (π/2, π/3, -π/3, 0, π/4, 0)`:
+1. Sparametryzuj trajektorię profilem cosinusowym (smooth start/stop):
+   `q(t) = q_A + (q_B - q_A) · ½ · (1 - cos(π·t/T))` dla t ∈ [0, T]
+   Wyprowadź q̇(t) i q̈(t) analitycznie.
+
+2. Dla T ∈ {0.5, 1, 2, 3, 5, 8, 12} s, wyznacz energię E(T) używając `robotEnergy()` z `src/lib/dynamics/motor-model.ts`.
+
+3. Zinterpretuj wynik:
+   - Dla małych T energia rośnie ~T⁻³ (z dynamiki: q̈ ~ T⁻², τ_dyn ~ T⁻², i ~ T⁻², P ~ T⁻⁴, E = ∫P·dt ~ T⁻³).
+   - Dla dużych T energia rośnie ~T (statyczna grawitacja, integrowana coraz dłużej).
+   - Optimum gdzieś pomiędzy.
+
+4. Zaimplementuj prostą **optymalizację 1D** — np. złoty podział lub Brent's method — żeby znaleźć T*. Funkcja celu: `f(T) = robotEnergy(...).totalEnergy`. Domena: T ∈ [0.3, 15] s.
+
+5. Wyznacz T* numerycznie i porównaj z wartościami z punktu 2.
+
+**Pliki:**
+- `src/lib/dynamics/__opt_energy_smoke.ts` — skrypt z optymalizacją
+- `docs/raport-zad13.md` — tabela E(T), wykres, znalezione optimum, dyskusja
+
+**Podpowiedź:** Złoty podział to klasyczne 8 linii kodu — patrz np. *Numerical Recipes*. Funkcja `robotEnergy` jest już zaimplementowana, wystarczy ją wywoływać dla różnych T. Dla pełnej optymalizacji z większą liczbą zmiennych decyzyjnych (np. profil prędkości, nie tylko czas) konieczne byłyby metody wielowymiarowe (Nelder-Mead z m4) — to już temat na zaawansowany projekt.
+
+**Kryterium oceny:** Tabela E(T), wykres, działająca optymalizacja, sensowne wyjaśnienie niemonotoniczności i znaczenia optimum dla projektowania cykli przemysłowych.
+
+---
+
 ## Klucz punktowania (sugerowany)
 
 | Zadanie | Punkty | Trudność |
@@ -270,8 +359,11 @@ Dla każdej miary:
 | 8 — Naruszona forma A Piepera | 25 | trudne |
 | 9 — DLS w Pythonie | 25 | trudne |
 | 10 — Miary selekcji | 30 | trudne |
+| 11 — Wpływ masy chwytaka na τ | 15 | średnie |
+| 12 — Statyczny vs dynamiczny moment | 20 | średnie |
+| 13 — Optymalizacja energetyczna | 30 | trudne |
 
-Łącznie: 190 punktów. Kolokwium zaliczeniowe: 100 punktów (wybór 4–5 zadań).
+Łącznie: 255 punktów. Kolokwium zaliczeniowe: 100 punktów (wybór 4–5 zadań).
 
 ---
 

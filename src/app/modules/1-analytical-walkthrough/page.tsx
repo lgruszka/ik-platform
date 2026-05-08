@@ -944,6 +944,14 @@ if (sq5_abs < eps) {
             i działają dla dowolnej geometrii (także tych, dla których
             zamknięta forma byłaby trudna do wyprowadzenia).
           </p>
+          <p>
+            Mając już <M tex="q" /> z IK, kolejny naturalny krok to:{" "}
+            <em>różniczkowanie po czasie</em> i pytanie o moment napędowy w przegubach.
+            Tym zajmuje się <a href="/modules/9-dynamics">moduł 9 (Dynamika odwrotna)</a> —
+            algorytm Newton-Euler na trajektorii (q, q̇, q̈) → siły i momenty napędowe τ.
+            Następnie <a href="/modules/10-energy">moduł 10</a> dorzuca model elektromechaniczny
+            silnika DC i przekładni harmonicznej, dochodząc do energii cyklu transportowego.
+          </p>
         </section>
       </div>
     </>

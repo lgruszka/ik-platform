@@ -90,4 +90,22 @@ export const MODULES: readonly ModuleMeta[] = [
     href: "/modules/8-orientations",
     status: "w trakcie",
   },
+  {
+    slug: "9-dynamics",
+    index: 9,
+    title: "Dynamika odwrotna (Newton-Euler)",
+    subtitle: "Od trajektorii (q, q̇, q̈) do momentów napędowych τ — robot ES5, forward + backward sweep, tensor bezwładności.",
+    category: "analiza",
+    href: "/modules/9-dynamics",
+    status: "w trakcie",
+  },
+  {
+    slug: "10-energy",
+    index: 10,
+    title: "Silnik DC i energia napędów",
+    subtitle: "Od momentu mechanicznego τᵢ przez przekładnię harmoniczną i silnik DC do mocy chwilowej i energii cyklu transportowego.",
+    category: "analiza",
+    href: "/modules/10-energy",
+    status: "planowany",
+  },
 ] as const;
