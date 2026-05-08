@@ -6,6 +6,7 @@ import { TorqueDisplay } from "@/components/dynamics/torque-display";
 import { TorqueChart } from "@/components/dynamics/torque-chart";
 import { NumericalExampleM9 } from "@/components/dynamics/numerical-example-m9";
 import { CheatSheetM9 } from "@/components/dynamics/cheat-sheet-m9";
+import { DissertationFigure } from "@/components/dynamics/dissertation-figure";
 
 export default function Module9() {
   return (
@@ -141,6 +142,30 @@ export default function Module9() {
             Sweep forward propaguje <em>stan kinematyczny</em> od bazy{" "}
             (gdzie <M tex="\boldsymbol\omega_0=\boldsymbol{0}" />,{" "}
             <M tex="\mathbf{v}_0=\boldsymbol{0}" />) do końcówki, ogniwo po ogniwie.
+            Schemat poniżej ilustruje wszystkie wektory kinematyczne związane z
+            pojedynczym ogniwem <em>i</em> i jego sąsiadami:
+          </p>
+          <DissertationFigure
+            src="/images/dynamics/fig-6-2-link-kinematics.png"
+            alt="Schemat członu kinematycznego robota przegubowego — wektory ω, ε, v, a w przegubach i, i+1 oraz w środku masy"
+            figureNumber="6.2"
+            caption={
+              <>
+                Schemat członu kinematycznego robota przegubowego — wektory prędkości
+                <strong> ω, v</strong> i przyspieszeń <strong>ε, a</strong> w przegubach{" "}
+                <em>i</em>, <em>i+1</em> oraz w środku masy <strong>v_Ci, a_Ci</strong>.
+                Wektor <em>p_Ci</em> wskazuje środek masy ogniwa, <em>p_i</em> łączy
+                początki układów <em>i</em> i <em>i+1</em>. Lokalne osie współrzędnych
+                <em> (x, y, z)</em> przypisane są wg konwencji DH (Craig).
+              </>
+            }
+            width={2050}
+            height={1020}
+          />
+          <p>
+            <strong>Prędkość kątowa</strong> ogniwa (i+1) jest sumą:
+            (a) prędkości ogniwa (i) obróconej do nowego układu, oraz (b) prędkości
+            własnego przegubu wzdłuż jego osi z:
           </p>
           <p>
             <strong>Prędkość kątowa</strong> ogniwa (i+1) jest sumą:
@@ -261,9 +286,31 @@ export default function Module9() {
           <p>
             Po wyliczeniu sił bezwładności w środkach mas wszystkich ogniw, lecimy{" "}
             <em>w drugą stronę</em> — od końcówki (gdzie nie ma obciążenia
-            zewnętrznego) do bazy. Każde ogniwo balansuje:
-            (a) siły reakcji od ogniwa wyższego, (b) własne siły bezwładności,
-            (c) siły grawitacji (już zaszyte w <M tex="\mathbf{F}_C" />):
+            zewnętrznego) do bazy. Schemat poniżej pokazuje wszystkie siły i
+            momenty działające na pojedyncze ogniwo:
+          </p>
+          <DissertationFigure
+            src="/images/dynamics/fig-6-3-link-forces.png"
+            alt="Schemat sił i momentów działających na i-ty człon: siła bezwładności w środku masy F_Ci, moment bezwładności M_Ci, siła grawitacji F_gi, siły i momenty reakcji w przegubach F_i, M_i, F_{i+1}, M_{i+1}"
+            figureNumber="6.3"
+            caption={
+              <>
+                Sposób przyporządkowania sił i momentów działających na <em>i</em>-ty
+                człon robota. <strong>F_Ci, M_Ci</strong> — siła i moment bezwładności w
+                środku masy. <strong>F_gi</strong> — siła grawitacji.{" "}
+                <strong>F_i, M_i</strong> — siła i moment reakcji w przegubie <em>i</em>{" "}
+                (od ogniwa <em>i-1</em>). <strong>F_{"{i+1}"}, M_{"{i+1}"}</strong> —
+                analogiczne wielkości od ogniwa <em>i+1</em>. Bilans tych sił daje{" "}
+                <em>backward sweep</em>: znając obciążenia zewnętrzne (zerowe za końcówką),
+                wyliczamy siłę i moment w każdym przegubie idąc od końca do bazy.
+              </>
+            }
+            width={2050}
+            height={910}
+          />
+          <p>
+            Każde ogniwo balansuje: (a) siły reakcji od ogniwa wyższego, (b) własne
+            siły bezwładności, (c) siły grawitacji (już zaszyte w <M tex="\mathbf{F}_C" />):
           </p>
           <MathBlock tex="{}^i\mathbf{f}_i = {}^iR_{i+1}\,{}^{i+1}\mathbf{f}_{i+1} + {}^i\mathbf{F}_{Ci}" />
           <p>
