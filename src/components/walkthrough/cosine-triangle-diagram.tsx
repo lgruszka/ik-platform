@@ -70,8 +70,8 @@ export function CosineTriangleDiagram() {
         </text>
 
         {/* Panel z formułami po prawej */}
-        <g transform={`translate(${W - 250}, 10)`}>
-          <rect x={0} y={0} width={240} height={150} fill="white" stroke="#e5e7eb" rx={6} />
+        <g transform={`translate(${W - 290}, 10)`}>
+          <rect x={0} y={0} width={280} height={150} fill="white" stroke="#e5e7eb" rx={6} />
           <text x={12} y={20} fontSize={11} fontFamily="monospace" fill="#64748b" fontWeight={600}>
             Prawo cosinusów dla △ AEW:
           </text>
