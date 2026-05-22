@@ -79,7 +79,7 @@ export function NumericalExampleM9() {
       </Section>
 
       <div className="grid gap-3 md:grid-cols-3">
-        <Section title="Forward sweep · ogniwo 1">
+        <Section title="Rekurencja w przód · ogniwo 1">
           <div className="space-y-1">
             <VecRow label="ω₁" value={NUM.link1.omega} unit="rad/s" />
             <VecRow label="a₁" value={NUM.link1.a} unit="m/s²" />
@@ -93,7 +93,7 @@ export function NumericalExampleM9() {
           </p>
         </Section>
 
-        <Section title="Forward sweep · ogniwo 2">
+        <Section title="Rekurencja w przód · ogniwo 2">
           <div className="space-y-1">
             <VecRow label="ω₂" value={NUM.link2.omega} unit="rad/s" />
             <VecRow label="a₂" value={NUM.link2.a} unit="m/s²" />
@@ -106,7 +106,7 @@ export function NumericalExampleM9() {
           </p>
         </Section>
 
-        <Section title="Forward sweep · ogniwo 3">
+        <Section title="Rekurencja w przód · ogniwo 3">
           <div className="space-y-1">
             <VecRow label="ω₃" value={NUM.link3.omega} unit="rad/s" />
             <VecRow label="a₃" value={NUM.link3.a} unit="m/s²" />
@@ -120,7 +120,7 @@ export function NumericalExampleM9() {
         </Section>
       </div>
 
-      <Section title="Backward sweep · momenty napędowe (rzut N_i na oś z_i)">
+      <Section title="Rekurencja w tył · momenty napędowe (rzut N_i na oś z_i)">
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2 text-xs font-mono">
           {NUM.torques.map((tau, i) => (
             <div key={i} className="rounded bg-[var(--code-bg)] px-3 py-2 text-center">

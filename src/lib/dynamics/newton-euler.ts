@@ -60,7 +60,7 @@ export type LinkState = {
   aCom: Vec3;
   /** ⁱF_Ci = mᵢ·aᶜᵢ — siła bezwładności w środku masy (zawiera grawitację). */
   forceInertial: Vec3;
-  /** ⁱN_Ci = Iᶜᵢ·εᵢ + ωᵢ × (Iᶜᵢ·ωᵢ) — moment bezwładności (giroskopowy). */
+  /** ⁱN_Ci = Iᶜᵢ·εᵢ + ωᵢ × (Iᶜᵢ·ωᵢ) — moment bezwładności (żyroskopowy). */
   momentInertial: Vec3;
 };
 
@@ -197,7 +197,7 @@ export function solveInverseDynamics(
     // Eq. (6.14): ⁱF_Ci = mᵢ · ⁱa_Ci  (siła d'Alemberta, zawiera grawitację dzięki a₀)
     const forceInertial: Vec3 = scale3(aCom, inertia[i].m);
 
-    // Eq. (6.15): ⁱN_Ci = Iᶜᵢ · ⁱε_i + ⁱω_i × (Iᶜᵢ · ⁱω_i)  (moment giroskopowy)
+    // Eq. (6.15): ⁱN_Ci = Iᶜᵢ · ⁱε_i + ⁱω_i × (Iᶜᵢ · ⁱω_i)  (moment żyroskopowy)
     const Iomega = mat3mulVec3(inertia[i].I, omega);
     const Ialpha = mat3mulVec3(inertia[i].I, alpha);
     const momentInertial: Vec3 = add3(Ialpha, cross3(omega, Iomega));

@@ -23,16 +23,16 @@ export function CheatSheetM9() {
         <MathBlock tex="{}^0\boldsymbol{\omega}_0 = \mathbf{0}, \quad {}^0\boldsymbol{\varepsilon}_0 = \mathbf{0}, \quad {}^0\mathbf{v}_0 = \mathbf{0}, \quad {}^0\mathbf{a}_0 = -g\,\hat{\mathbf{z}}_{\text{world}}" />
         <p className="text-xs text-[var(--muted)] mt-1">
           Sztuczka Craig'a: a₀ to "fictitious upward base acceleration" — symuluje
-          grawitację działającą "w dół" na ogniwa, dzięki czemu w forward sweep
+          grawitację działającą "w dół" na ogniwa, dzięki czemu w rekurencji w przód
           aᶜᵢ propaguje grawitację automatycznie.
         </p>
       </Row>
 
-      <Row label="Forward sweep · prędkość kątowa (eq. 6.6)">
+      <Row label="Rekurencja w przód (forward sweep) · prędkość kątowa (eq. 6.6)">
         <MathBlock tex="{}^{i+1}\boldsymbol{\omega}_{i+1} = {}^{i+1}R_i\,{}^i\boldsymbol{\omega}_i + \dot\theta_{i+1}\,\hat{\mathbf{z}}_{i+1}" />
       </Row>
 
-      <Row label="Forward sweep · przyspieszenie kątowe (eq. 6.7)">
+      <Row label="Rekurencja w przód · przyspieszenie kątowe (eq. 6.7)">
         <MathBlock tex="{}^{i+1}\boldsymbol{\varepsilon}_{i+1} = {}^{i+1}R_i\,{}^i\boldsymbol{\varepsilon}_i + ({}^{i+1}R_i\,{}^i\boldsymbol{\omega}_i)\times\dot\theta_{i+1}\hat{\mathbf{z}}_{i+1} + \ddot\theta_{i+1}\hat{\mathbf{z}}_{i+1}" />
         <p className="text-xs text-[var(--muted)] mt-1">
           Drugi człon to <strong>efekt Coriolisa</strong> — pojawia się gdy ogniwo
@@ -40,11 +40,11 @@ export function CheatSheetM9() {
         </p>
       </Row>
 
-      <Row label="Forward sweep · prędkość liniowa początku ogniwa (eq. 6.8)">
+      <Row label="Rekurencja w przód · prędkość liniowa początku ogniwa (eq. 6.8)">
         <MathBlock tex="{}^{i+1}\mathbf{v}_{i+1} = {}^{i+1}R_i\,\bigl({}^i\mathbf{v}_i + {}^i\boldsymbol{\omega}_i\times {}^i\mathbf{p}_{i+1}\bigr)" />
       </Row>
 
-      <Row label="Forward sweep · przyspieszenie liniowe początku ogniwa (eq. 6.9)">
+      <Row label="Rekurencja w przód · przyspieszenie liniowe początku ogniwa (eq. 6.9)">
         <MathBlock tex="{}^{i+1}\mathbf{a}_{i+1} = {}^{i+1}R_i\,\bigl({}^i\boldsymbol{\varepsilon}_i\times {}^i\mathbf{p}_{i+1} + {}^i\boldsymbol{\omega}_i\times({}^i\boldsymbol{\omega}_i\times {}^i\mathbf{p}_{i+1}) + {}^i\mathbf{a}_i\bigr)" />
         <p className="text-xs text-[var(--muted)] mt-1">
           Pierwszy człon — tangencjalny (od ε), drugi — odśrodkowy (analog v²/r),
@@ -62,15 +62,15 @@ export function CheatSheetM9() {
         <MathBlock tex="{}^i\mathbf{F}_{Ci} = m_i\,{}^i\mathbf{a}_{Ci}, \qquad {}^i\mathbf{N}_{Ci} = I_{Ci}\,{}^i\boldsymbol{\varepsilon}_i + {}^i\boldsymbol{\omega}_i\times(I_{Ci}\,{}^i\boldsymbol{\omega}_i)" />
         <p className="text-xs text-[var(--muted)] mt-1">
           F_C — siła d'Alemberta (z grawitacją). Drugi człon w N_C to <strong>moment
-          giroskopowy</strong> — odpowiedzialny za precesję szybko obracających się ogniw.
+          żyroskopowy</strong> — odpowiedzialny za precesję szybko obracających się ogniw.
         </p>
       </Row>
 
-      <Row label="Backward sweep · siła reakcji w przegubie (Craig, 6.49)">
+      <Row label="Rekurencja w tył (backward sweep) · siła reakcji w przegubie (Craig, 6.49)">
         <MathBlock tex="{}^i\mathbf{f}_i = {}^iR_{i+1}\,{}^{i+1}\mathbf{f}_{i+1} + {}^i\mathbf{F}_{Ci}" />
       </Row>
 
-      <Row label="Backward sweep · moment siły w przegubie (Craig, 6.50)">
+      <Row label="Rekurencja w tył · moment siły w przegubie (Craig, 6.50)">
         <MathBlock tex="{}^i\mathbf{n}_i = {}^i\mathbf{N}_{Ci} + {}^iR_{i+1}\,{}^{i+1}\mathbf{n}_{i+1} + {}^i\mathbf{p}_{Ci}\times {}^i\mathbf{F}_{Ci} + {}^i\mathbf{p}_{i+1}\times({}^iR_{i+1}\,{}^{i+1}\mathbf{f}_{i+1})" />
       </Row>
 
@@ -96,10 +96,10 @@ export function CheatSheetM9() {
           <li>
             <strong>Kierunek transformacji R</strong> — modifiedDHTransform zwraca
             macierz, której kolumny to baza (i) wyrażona w (i-1). Aby przejść z (i-1)
-            do (i) w forward sweep, trzeba użyć <strong>R^T</strong>, nie R.
+            do (i) w rekurencji w przód, trzeba użyć <strong>R^T</strong>, nie R.
           </li>
           <li>
-            <strong>Konwencja a₀</strong> — Craig: a₀ = -g·ẑ (z grawitacją w forward sweep,
+            <strong>Konwencja a₀</strong> — Craig: a₀ = -g·ẑ (z grawitacją w rekurencji w przód,
             bez osobnego F_g). Niektóre teksty używają a₀ = 0 + osobny F_g — równoważne,
             ale nie wolno mieszać konwencji w jednej implementacji.
           </li>

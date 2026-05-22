@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import { ES5, ES5_INERTIA } from "@/lib/robots/es5";
 import { solveInverseDynamics } from "@/lib/dynamics/newton-euler";
+import { PICK_AND_PLACE_SCENARIOS as SCENARIOS } from "@/lib/dynamics/pick-and-place-scenarios";
 import { useMounted } from "@/lib/hooks";
-import type { JointConfig } from "@/lib/types";
 
 /**
  * Wykres τ_i(t) dla 6 napędów ES5 dla zadanej trajektorii pick-and-place.
@@ -12,87 +12,6 @@ import type { JointConfig } from "@/lib/types";
  * Trajektoria: ruch sinusoidalny dwóch wybranych przegubów po ścieżce
  * "podnieś-przemieść-odłóż". Można wybrać scenariusz z dropdown-a.
  */
-
-type Scenario = {
-  id: string;
-  label: string;
-  /** Zwraca (q, q̇, q̈) dla danego τ ∈ [0, 1] (czasu znormalizowanego). */
-  trajectory: (tau: number) => { q: JointConfig; qd: number[]; qdd: number[] };
-};
-
-const SCENARIOS: readonly Scenario[] = [
-  {
-    id: "shoulder-up",
-    label: "Tylko q₂: 0 → π/2 (ramię w pion)",
-    trajectory: (tau) => {
-      const T = 2; // s
-      const t = tau * T;
-      const A = Math.PI / 2;
-      // Smooth profil sinusoidalny
-      const ang     = (A / 2) * (1 - Math.cos(Math.PI * tau));
-      const angDot  = (A / 2) * Math.sin(Math.PI * tau) * Math.PI / T;
-      const angDdot = (A / 2) * Math.cos(Math.PI * tau) * (Math.PI / T) ** 2;
-      void t;
-      return {
-        q: [0, ang, 0, 0, 0, 0] as unknown as JointConfig,
-        qd: [0, angDot, 0, 0, 0, 0],
-        qdd: [0, 0, angDdot, 0, 0, 0],
-      };
-    },
-  },
-  {
-    id: "pick-place",
-    label: "Pick-and-place (q₁ obrót + q₂ podnieś)",
-    trajectory: (tau) => {
-      const T = 2;
-      // Faza 1: 0..0.5 — podnieś (q₂: 0 → π/3); Faza 2: 0.5..1 — obrót (q₁: 0 → π/2)
-      const phase = tau < 0.5 ? "lift" : "rotate";
-      const subT = phase === "lift" ? tau / 0.5 : (tau - 0.5) / 0.5;
-      const A1 = Math.PI / 2; // q₁ amplituda
-      const A2 = Math.PI / 3; // q₂ amplituda
-      const halfT = T / 2;
-
-      let q1 = 0, q1d = 0, q1dd = 0;
-      let q2 = 0, q2d = 0, q2dd = 0;
-
-      if (phase === "lift") {
-        q2 = (A2 / 2) * (1 - Math.cos(Math.PI * subT));
-        q2d = (A2 / 2) * Math.sin(Math.PI * subT) * Math.PI / halfT;
-        q2dd = (A2 / 2) * Math.cos(Math.PI * subT) * (Math.PI / halfT) ** 2;
-      } else {
-        q2 = A2; // pozostaje podniesione
-        q1 = (A1 / 2) * (1 - Math.cos(Math.PI * subT));
-        q1d = (A1 / 2) * Math.sin(Math.PI * subT) * Math.PI / halfT;
-        q1dd = (A1 / 2) * Math.cos(Math.PI * subT) * (Math.PI / halfT) ** 2;
-      }
-
-      return {
-        q: [q1, q2, 0, 0, 0, 0] as unknown as JointConfig,
-        qd: [q1d, q2d, 0, 0, 0, 0],
-        qdd: [q1dd, q2dd, 0, 0, 0, 0],
-      };
-    },
-  },
-  {
-    id: "all-axes",
-    label: "Ruch wszystkich 6 osi (faza przesunięta)",
-    trajectory: (tau) => {
-      const T = 2;
-      const A = Math.PI / 4;
-      const halfT = T / 2;
-      const q: number[] = [];
-      const qd: number[] = [];
-      const qdd: number[] = [];
-      for (let j = 0; j < 6; j++) {
-        const phase = (j * Math.PI) / 6; // przesunięcie fazowe
-        q.push((A / 2) * (1 - Math.cos(Math.PI * tau + phase)));
-        qd.push((A / 2) * Math.sin(Math.PI * tau + phase) * Math.PI / halfT);
-        qdd.push((A / 2) * Math.cos(Math.PI * tau + phase) * (Math.PI / halfT) ** 2);
-      }
-      return { q: q as unknown as JointConfig, qd, qdd };
-    },
-  },
-];
 
 const COLORS = ["#0ea5e9", "#10b981", "#f97316", "#a855f7", "#f59e0b", "#ef4444"];
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useEs5Store } from "@/lib/es5-store";
 import { ES5 } from "@/lib/robots/es5";
 import { RobotViewer } from "../robot/robot-viewer";
@@ -22,12 +23,41 @@ export function Es5Playground({ height = 480, showFrames = false }: Props) {
     joints, qDot, qDdot,
     setJoint, setQDot, setQDdot, resetToHome,
   } = useEs5Store();
+  const [showCom, setShowCom] = useState(false);
+  const [showInertia, setShowInertia] = useState(false);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_22rem]">
-      <RobotViewer height={height}>
-        <Es5Model joints={joints} showFrames={showFrames} />
-      </RobotViewer>
+      <div className="relative">
+        <RobotViewer height={height}>
+          <Es5Model
+            joints={joints}
+            showFrames={showFrames}
+            showCom={showCom}
+            showInertiaEllipsoids={showInertia}
+          />
+        </RobotViewer>
+        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10 bg-white/85 dark:bg-black/60 backdrop-blur rounded-md border border-[var(--panel-border)] px-2 py-1.5 text-[11px]">
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showCom}
+              onChange={(e) => setShowCom(e.target.checked)}
+              className="accent-purple-500"
+            />
+            <span style={{ color: "#a855f7" }}>● środki masy</span>
+          </label>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showInertia}
+              onChange={(e) => setShowInertia(e.target.checked)}
+              className="accent-teal-500"
+            />
+            <span style={{ color: "#14b8a6" }}>● elipsoidy bezwładności</span>
+          </label>
+        </div>
+      </div>
       <div className="space-y-3">
         {/* Konfiguracja q */}
         <SliderPanel

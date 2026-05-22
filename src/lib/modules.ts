@@ -94,7 +94,7 @@ export const MODULES: readonly ModuleMeta[] = [
     slug: "9-dynamics",
     index: 9,
     title: "Dynamika odwrotna (Newton-Euler)",
-    subtitle: "Od trajektorii (q, q̇, q̈) do momentów napędowych τ — robot ES5, forward + backward sweep, tensor bezwładności.",
+    subtitle: "Od trajektorii (q, q̇, q̈) do momentów napędowych τ — robot ES5, rekurencja w przód i w tył (forward/backward sweep), tensor bezwładności.",
     category: "analiza",
     href: "/modules/9-dynamics",
     status: "w trakcie",
@@ -107,5 +107,14 @@ export const MODULES: readonly ModuleMeta[] = [
     category: "analiza",
     href: "/modules/10-energy",
     status: "planowany",
+  },
+  {
+    slug: "11-drive-sizing",
+    index: 11,
+    title: "Dobór napędów",
+    subtitle: "Pełen pipeline projektowy: od τ(t) z dynamiki odwrotnej, przez 4 metryki konstrukcyjne i krzywą T-N silnika, do konkretnego modelu z katalogu Maxon/Kollmorgen + Harmonic Drive.",
+    category: "analiza",
+    href: "/modules/11-drive-sizing",
+    status: "w trakcie",
   },
 ] as const;

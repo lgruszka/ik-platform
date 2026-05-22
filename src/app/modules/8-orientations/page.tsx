@@ -146,13 +146,13 @@ export default function Module8() {
         <StepPanel number={3} title="Gimbal lock — ilustracja na żywo">
           <p>
             Każda rotacja w 3 wymiarach to złożenie obrotów wokół trzech osi.
-            Wyobraź sobie giroskop z trzema obręczami — każda umożliwia obrót
+            Wyobraź sobie żyroskop z trzema obręczami — każda umożliwia obrót
             wokół innej osi, połączone w łańcuch. <strong>Gimbal lock</strong>{" "}
             zachodzi, gdy dwie z tych osi się <em>pokrywają</em>:
           </p>
           <GimbalLockDiagram />
           <p>
-            Gimbal lock w fizycznym giroskopie utrudnia pracę pilotom (znany
+            Gimbal lock w fizycznym żyroskopie utrudnia pracę pilotom (znany
             problem w Apollo 11), w robotyce — psuje kontrolery używające
             kątów Eulera w okolicach pitch ≈ ±90°. <strong>Lekarstwo:</strong>{" "}
             używaj kwaternionów lub macierzy do reprezentacji wewnętrznej

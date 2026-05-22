@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { Vector3, Quaternion } from "three";
 import { Line } from "@react-three/drei";
-import { ES5 } from "@/lib/robots/es5";
+import { ES5, ES5_INERTIA } from "@/lib/robots/es5";
 import { forwardKinematicsFrames, linkIntermediates } from "@/lib/robots";
 import { decomposeFrame } from "@/lib/math/three-interop";
 import type { JointConfig, Matrix4 } from "@/lib/types";
@@ -13,6 +13,7 @@ type Props = {
   joints: JointConfig;
   showFrames?: boolean;
   showCom?: boolean;
+  showInertiaEllipsoids?: boolean;
   tcpLength?: number;
 };
 
@@ -34,6 +35,42 @@ function Segment({ from, to, radius = 0.04, color = "#52525b" }:
     <mesh position={mid} quaternion={q}>
       <cylinderGeometry args={[radius, radius, length, 20]} />
       <meshStandardMaterial color={color} roughness={0.5} metalness={0.3} />
+    </mesh>
+  );
+}
+
+/**
+ * Elipsoida bezwładności w lokalnym układzie ogniwa, narysowana wokół
+ * środka masy. Półosie są proporcjonalne do 1/√λᵢ (gdzie λᵢ to główne
+ * momenty bezwładności) — intuicja: dłuższa półoś = łatwiej obracać
+ * (mniejsza bezwładność) wokół tej osi. Skala dobrana tak, żeby elipsoida
+ * mieściła się w typowej geometrii ogniwa (~0.1 m skala bazowa).
+ *
+ * Założenie: tensor I_C jest diagonalny w lokalnym układzie ogniwa
+ * (cylinderInertia → diag). Główne osie elipsoidy = osie lokalne ogniwa.
+ */
+function InertiaEllipsoid({
+  centerWorld, linkQuaternion, Ixx, Iyy, Izz, mass,
+}: {
+  centerWorld: Vector3;
+  linkQuaternion: Quaternion;
+  Ixx: number; Iyy: number; Izz: number; mass: number;
+}) {
+  // Półosie ∝ 1/√(I_i/m). Skala bazowa: dla 1 kg·m² normalizujemy do 0.08 m.
+  // Wartość poniżej dobrana empirycznie żeby elipsoidy były wyraźne ale nie
+  // przesłaniały samego ogniwa.
+  const scaleFactor = 0.025;
+  const rx = scaleFactor / Math.sqrt(Math.max(Ixx / mass, 1e-6));
+  const ry = scaleFactor / Math.sqrt(Math.max(Iyy / mass, 1e-6));
+  const rz = scaleFactor / Math.sqrt(Math.max(Izz / mass, 1e-6));
+  // Hard cap na rozmiar — gdy I bardzo małe (np. nadgarstek wzdłuż osi
+  // głównej cylindra), elipsoida nie powinna „rosnąć w nieskończoność".
+  const maxR = 0.12;
+  const cap = (v: number) => Math.min(maxR, v);
+  return (
+    <mesh position={centerWorld} quaternion={linkQuaternion} scale={[cap(rx), cap(ry), cap(rz)]}>
+      <sphereGeometry args={[1, 24, 16]} />
+      <meshStandardMaterial color="#14b8a6" transparent opacity={0.28} roughness={0.4} />
     </mesh>
   );
 }
@@ -61,6 +98,7 @@ export function Es5Model({
   joints,
   showFrames = false,
   showCom = false,
+  showInertiaEllipsoids = false,
   tcpLength = 0.08,
 }: Props) {
   const robotWithTool = useMemo(
@@ -140,11 +178,34 @@ export function Es5Model({
       </mesh>
 
       {/* Środki masy (jeśli włączone) — fioletowe kuleczki w lokalnym układzie ogniwa */}
-      {showCom &&
+      {(showCom || showInertiaEllipsoids) &&
         frames.slice(1, 7).map((T, i) => {
-          // pCom z ES5_INERTIA[i]; w lokalnym układzie ogniwa i+1
-          // Trzeba przejść z lokalnego do bazy: pCom_world = T_0_(i+1) · pCom_local
-          return null; // Implementacja pełna przy InertiaEllipsoid
+          const inertia = ES5_INERTIA[i];
+          const { position: linkPos, quaternion: linkQ } = decomposeFrame(T);
+          // pCom w bazie: T_0_(i+1) · pCom_local — używamy lokalnego układu ogniwa
+          // przesuniętego o pCom (lokalnie).
+          const pComLocal = new Vector3(inertia.pCom[0], inertia.pCom[1], inertia.pCom[2]);
+          const pComWorld = pComLocal.clone().applyQuaternion(linkQ).add(linkPos);
+          return (
+            <group key={`com-${i}`}>
+              {showCom && (
+                <mesh position={pComWorld}>
+                  <sphereGeometry args={[0.015, 12, 12]} />
+                  <meshStandardMaterial color="#a855f7" emissive="#7e22ce" emissiveIntensity={0.4} />
+                </mesh>
+              )}
+              {showInertiaEllipsoids && (
+                <InertiaEllipsoid
+                  centerWorld={pComWorld}
+                  linkQuaternion={linkQ}
+                  Ixx={inertia.I[0][0]}
+                  Iyy={inertia.I[1][1]}
+                  Izz={inertia.I[2][2]}
+                  mass={inertia.m}
+                />
+              )}
+            </group>
+          );
         })}
 
       {/* Triad osi DH (jeśli włączone) */}
