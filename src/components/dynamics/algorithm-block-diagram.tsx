@@ -6,10 +6,13 @@
  *
  * Każdy blok podpisany numerem kroku w module, tak żeby student widział
  * powiązanie między teorią a praktyką.
+ *
+ * Layout używa foreignObject + HTML divów do tekstu wewnątrz boxów —
+ * pozwala na automatyczne zawijanie i poprawne mieszczenie napisów.
  */
 export function AlgorithmBlockDiagram() {
-  const W = 760, H = 220;
-  const boxH = 64;
+  const W = 880, H = 250;
+  const boxH = 92;
   const boxY = 80;
   const r = (n: number) => Math.round(n * 100) / 100;
 
@@ -20,11 +23,11 @@ export function AlgorithmBlockDiagram() {
     stepRef: string;
   };
   const boxes: Box[] = [
-    { x: 30,  w: 110, label: "Wejście", sublabel: "(q, q̇, q̈) + inercja", color: "#0f172a", fill: "#f1f5f9", stepRef: "krok 1" },
-    { x: 160, w: 160, label: "Rekurencja w przód", sublabel: "ω, ε, a propagowane od bazy", color: "#0284c7", fill: "#e0f2fe", stepRef: "kroki 2–3" },
-    { x: 340, w: 130, label: "Siły bezwładności", sublabel: "F_C = m·a_C,  N_C = I·ε + ω×Iω", color: "#dc2626", fill: "#fef2f2", stepRef: "krok 4" },
-    { x: 490, w: 150, label: "Rekurencja w tył", sublabel: "f, n bilansowane od końcówki", color: "#9333ea", fill: "#faf5ff", stepRef: "krok 5" },
-    { x: 660, w: 80,  label: "Wyjście τ", sublabel: "τ_i = (n_i)_z", color: "#0f172a", fill: "#fef3c7", stepRef: "krok 5" },
+    { x: 20,  w: 130, label: "Wejście", sublabel: "(q, q̇, q̈) + parametry inercji", color: "#0f172a", fill: "#f1f5f9", stepRef: "krok 1" },
+    { x: 170, w: 180, label: "Rekurencja w przód", sublabel: "ω, ε, a propagowane od bazy do końcówki", color: "#0284c7", fill: "#e0f2fe", stepRef: "kroki 2–3" },
+    { x: 370, w: 180, label: "Siły bezwładności", sublabel: "F_C = m·a_C, N_C = I·ε + ω×Iω (lokalnie per ogniwo)", color: "#dc2626", fill: "#fef2f2", stepRef: "krok 4" },
+    { x: 570, w: 180, label: "Rekurencja w tył", sublabel: "f, n bilansowane od końcówki do bazy", color: "#9333ea", fill: "#faf5ff", stepRef: "krok 5" },
+    { x: 770, w: 90,  label: "Wyjście τ", sublabel: "τ_i = (n_i)_z", color: "#0f172a", fill: "#fef3c7", stepRef: "krok 5" },
   ];
 
   return (
@@ -45,15 +48,26 @@ export function AlgorithmBlockDiagram() {
           <g key={i}>
             <rect x={b.x} y={boxY} width={b.w} height={boxH} rx={6}
                   fill={b.fill} stroke={b.color} strokeWidth={1.8} />
-            <text x={r(b.x + b.w / 2)} y={r(boxY + 22)} textAnchor="middle"
+            {/* Tytuł */}
+            <text x={r(b.x + b.w / 2)} y={r(boxY + 20)} textAnchor="middle"
                   fontSize={13} fontFamily="system-ui" fontWeight={600} fill={b.color}>
               {b.label}
             </text>
-            <text x={r(b.x + b.w / 2)} y={r(boxY + 40)} textAnchor="middle"
-                  fontSize={10} fontFamily="monospace" fill="#475569">
-              {b.sublabel}
-            </text>
-            <text x={r(b.x + b.w / 2)} y={r(boxY + 56)} textAnchor="middle"
+            {/* Sublabel z foreignObject — automatyczne zawijanie */}
+            <foreignObject x={b.x + 6} y={boxY + 26} width={b.w - 12} height={boxH - 46}>
+              <div style={{
+                fontSize: 10,
+                fontFamily: "ui-monospace, SFMono-Regular, monospace",
+                color: "#475569",
+                textAlign: "center",
+                lineHeight: 1.25,
+                padding: "2px 0",
+              }}>
+                {b.sublabel}
+              </div>
+            </foreignObject>
+            {/* Numer kroku — na dole boxa */}
+            <text x={r(b.x + b.w / 2)} y={r(boxY + boxH - 6)} textAnchor="middle"
                   fontSize={9} fontFamily="monospace" fill="#94a3b8" fontStyle="italic">
               {b.stepRef}
             </text>
@@ -69,21 +83,21 @@ export function AlgorithmBlockDiagram() {
         ))}
 
         {/* dolny tekst — co przepływa między blokami */}
-        <text x={150} y={170} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#0284c7">
+        <text x={160} y={195} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#0284c7">
           q, q̇, q̈
         </text>
-        <text x={330} y={170} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#0284c7">
+        <text x={360} y={195} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#0284c7">
           ω, ε, a_C
         </text>
-        <text x={480} y={170} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#dc2626">
+        <text x={560} y={195} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#dc2626">
           F_C, N_C
         </text>
-        <text x={650} y={170} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#9333ea">
+        <text x={760} y={195} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#9333ea">
           f, n
         </text>
 
         {/* dolna linia podpisu: O(n) */}
-        <text x={W / 2} y={200} textAnchor="middle" fontSize={11} fontFamily="system-ui" fill="#64748b">
+        <text x={W / 2} y={230} textAnchor="middle" fontSize={11} fontFamily="system-ui" fill="#64748b">
           Pełny koszt: <tspan fontFamily="monospace" fontWeight={600}>O(n)</tspan> dla n przegubów
           — dwa sekwencyjne przebiegi po ogniwach
         </text>
