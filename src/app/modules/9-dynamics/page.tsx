@@ -97,6 +97,15 @@ export default function Module9() {
             </p>
           </div>
 
+          <p className="text-sm text-[var(--muted)]">
+            Animacja poniżej pokazuje co dokładnie znaczy „rekurencja w przód +
+            w tył" — zanim wejdziemy w wzory, naciśnij <strong>▶ play</strong> i
+            zobacz przepływ informacji wzdłuż 6 ogniw:
+          </p>
+          <NewtonEulerSweepDiagram />
+
+          <WhyTwoSweeps />
+
           <div className="rounded-lg border-l-4 border-sky-500 bg-sky-50 dark:bg-sky-950/20 px-4 py-3 my-4 text-sm">
             <p className="font-semibold mb-1">Inverse vs forward dynamics — co właściwie liczymy</p>
             <p className="text-[var(--muted)] mb-2">
@@ -130,10 +139,6 @@ export default function Module9() {
             ← Powiązany moduł 1 (Puma 560)
           </a>: <span className="text-sm text-[var(--muted)]">tam pokazujemy <strong>kinematykę odwrotną</strong> Pumy (forma A warunku Piepera).
           Tu ES5 (forma B) — geometria inna, ale algorytm <em>dynamiki</em> Newton-Euler jest identyczny dla obu robotów.</span>
-
-          <WhyTwoSweeps />
-
-          <NewtonEulerSweepDiagram />
         </section>
 
         <section className="space-y-4">
@@ -199,6 +204,34 @@ export default function Module9() {
         </StepPanel>
 
         <NotationLegend />
+
+        <section className="prose-ik" id="fig-6-2">
+          <h3>Wizualna mapa symboli — rysunek 6.2 z dysertacji</h3>
+          <p>
+            Wszystkie wektory wprowadzone w legendzie powyżej (<M tex="\boldsymbol\omega, \boldsymbol\varepsilon, \mathbf{v}, \mathbf{a}, \mathbf{v}_{Ci}, \mathbf{a}_{Ci}, \mathbf{p}_{Ci}, \mathbf{p}_i" />)
+            mają swoje miejsce geometryczne na pojedynczym ogniwie manipulatora.
+            Poniższy schemat służy jako <em>słownik wizualny</em> — wracaj do
+            niego za każdym razem gdy w kolejnych krokach pojawi się wektor,
+            którego umiejscowienia nie pamiętasz:
+          </p>
+          <DissertationFigure
+            src="/images/dynamics/fig-6-2-link-kinematics.png"
+            alt="Schemat członu kinematycznego robota przegubowego — wektory ω, ε, v, a w przegubach i, i+1 oraz w środku masy"
+            figureNumber="6.2"
+            caption={
+              <>
+                Schemat członu kinematycznego robota przegubowego — wektory prędkości
+                <strong> ω, v</strong> i przyspieszeń <strong>ε, a</strong> w przegubach{" "}
+                <em>i</em>, <em>i+1</em> oraz w środku masy <strong>v_Ci, a_Ci</strong>.
+                Wektor <em>p_Ci</em> wskazuje środek masy ogniwa, <em>p_i</em> łączy
+                początki układów <em>i</em> i <em>i+1</em>. Lokalne osie współrzędnych
+                <em> (x, y, z)</em> przypisane są wg konwencji DH (Craig).
+              </>
+            }
+            width={2050}
+            height={1020}
+          />
+        </section>
 
         <StepPanel number={1} title="Założenia i parametry inercji">
           <p>
@@ -302,26 +335,11 @@ export default function Module9() {
             Rekurencja w przód propaguje <em>stan kinematyczny</em> od bazy{" "}
             (gdzie <M tex="\boldsymbol\omega_0=\boldsymbol{0}" />,{" "}
             <M tex="\mathbf{v}_0=\boldsymbol{0}" />) do końcówki, ogniwo po ogniwie.
-            Schemat poniżej ilustruje wszystkie wektory kinematyczne związane z
-            pojedynczym ogniwem <em>i</em> i jego sąsiadami:
+            Wszystkie wektory geometryczne, którymi tu operujemy{" "}
+            (<M tex="\boldsymbol\omega, \boldsymbol\varepsilon, \mathbf{v}, \mathbf{a}, \mathbf{p}_i" />),
+            są pokazane na <a href="#fig-6-2" className="text-[var(--accent)] underline">rysunku 6.2 powyżej</a> —
+            wróć do niego w razie wątpliwości.
           </p>
-          <DissertationFigure
-            src="/images/dynamics/fig-6-2-link-kinematics.png"
-            alt="Schemat członu kinematycznego robota przegubowego — wektory ω, ε, v, a w przegubach i, i+1 oraz w środku masy"
-            figureNumber="6.2"
-            caption={
-              <>
-                Schemat członu kinematycznego robota przegubowego — wektory prędkości
-                <strong> ω, v</strong> i przyspieszeń <strong>ε, a</strong> w przegubach{" "}
-                <em>i</em>, <em>i+1</em> oraz w środku masy <strong>v_Ci, a_Ci</strong>.
-                Wektor <em>p_Ci</em> wskazuje środek masy ogniwa, <em>p_i</em> łączy
-                początki układów <em>i</em> i <em>i+1</em>. Lokalne osie współrzędnych
-                <em> (x, y, z)</em> przypisane są wg konwencji DH (Craig).
-              </>
-            }
-            width={2050}
-            height={1020}
-          />
           <p>
             <strong>Prędkość kątowa</strong> ogniwa (i+1) jest sumą:
             (a) prędkości ogniwa (i) obróconej do nowego układu, oraz (b) prędkości
@@ -433,6 +451,33 @@ export default function Module9() {
 
         <StepPanel number={4} title="Tensor bezwładności i siły bezwładności (eq. 6.13–6.15)">
           <p>
+            Tu wprowadzamy symbole, które będą fundamentem dla rekurencji w tył:{" "}
+            <M tex="\mathbf{F}_{Ci}" /> (siła bezwładności w środku masy) i{" "}
+            <M tex="\mathbf{N}_{Ci}" /> (moment bezwładności). Rysunek 6.3
+            poniżej pokazuje je w kontekście wszystkich pozostałych sił
+            działających na pojedyncze ogniwo — w tym sił reakcji w przegubach
+            (<M tex="\mathbf{f}_i, \mathbf{n}_i" />), które wyliczymy w kroku 5:
+          </p>
+          <div id="fig-6-3" /><DissertationFigure
+            src="/images/dynamics/fig-6-3-link-forces.png"
+            alt="Schemat sił i momentów działających na i-ty człon: siła bezwładności w środku masy F_Ci, moment bezwładności M_Ci, siła grawitacji F_gi, siły i momenty reakcji w przegubach F_i, M_i, F_{i+1}, M_{i+1}"
+            figureNumber="6.3"
+            caption={
+              <>
+                Sposób przyporządkowania sił i momentów działających na <em>i</em>-ty
+                człon robota. <strong>F_Ci, M_Ci</strong> — siła i moment bezwładności w
+                środku masy (wprowadzamy w tym kroku). <strong>F_gi</strong> — siła grawitacji.{" "}
+                <strong>F_i, M_i</strong> — siła i moment reakcji w przegubie <em>i</em>{" "}
+                (od ogniwa <em>i-1</em>). <strong>F_{"{i+1}"}, M_{"{i+1}"}</strong> —
+                analogiczne wielkości od ogniwa <em>i+1</em>. Bilans tych sił daje
+                rekurencję w tył (krok 5) — znając obciążenia zewnętrzne (zerowe za końcówką),
+                wyliczamy siłę i moment w każdym przegubie idąc od końca do bazy.
+              </>
+            }
+            width={2050}
+            height={910}
+          />
+          <p>
             Mając przyspieszenie środka masy{" "}
             <M tex="{}^i\mathbf{a}_{Ci}" />, siła bezwładności (d'Alemberta) to
             po prostu II zasada Newtona:
@@ -503,28 +548,10 @@ export default function Module9() {
           <p>
             Po wyliczeniu sił bezwładności w środkach mas wszystkich ogniw, lecimy{" "}
             <em>w drugą stronę</em> — od końcówki (gdzie nie ma obciążenia
-            zewnętrznego) do bazy. Schemat poniżej pokazuje wszystkie siły i
-            momenty działające na pojedyncze ogniwo:
+            zewnętrznego) do bazy. Wracamy do{" "}
+            <a href="#fig-6-3" className="text-[var(--accent)] underline">rysunku 6.3 z kroku 4</a> —
+            tym razem ze szczegółowym bilansem czterech składowych w przegubie.
           </p>
-          <DissertationFigure
-            src="/images/dynamics/fig-6-3-link-forces.png"
-            alt="Schemat sił i momentów działających na i-ty człon: siła bezwładności w środku masy F_Ci, moment bezwładności M_Ci, siła grawitacji F_gi, siły i momenty reakcji w przegubach F_i, M_i, F_{i+1}, M_{i+1}"
-            figureNumber="6.3"
-            caption={
-              <>
-                Sposób przyporządkowania sił i momentów działających na <em>i</em>-ty
-                człon robota. <strong>F_Ci, M_Ci</strong> — siła i moment bezwładności w
-                środku masy. <strong>F_gi</strong> — siła grawitacji.{" "}
-                <strong>F_i, M_i</strong> — siła i moment reakcji w przegubie <em>i</em>{" "}
-                (od ogniwa <em>i-1</em>). <strong>F_{"{i+1}"}, M_{"{i+1}"}</strong> —
-                analogiczne wielkości od ogniwa <em>i+1</em>. Bilans tych sił daje{" "}
-                <em>rekurencję w tył</em> (backward sweep): znając obciążenia zewnętrzne (zerowe za końcówką),
-                wyliczamy siłę i moment w każdym przegubie idąc od końca do bazy.
-              </>
-            }
-            width={2050}
-            height={910}
-          />
           <p>
             Każde ogniwo balansuje: (a) siły reakcji od ogniwa wyższego, (b) własne
             siły bezwładności, (c) siły grawitacji (już zaszyte w <M tex="\mathbf{F}_C" />):
