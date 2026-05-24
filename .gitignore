@@ -50,3 +50,6 @@ next-env.d.ts
 !docs/pdf/.gitkeep
 /docs/pdf/*.pdf
 
+# wewnętrzne plany pedagogiczne — metodyka prywatna, nie do publicznego repo
+/docs/plan-m9-przebudowa-pedagogiczna.md
+
