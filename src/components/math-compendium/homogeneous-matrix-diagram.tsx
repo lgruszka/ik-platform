@@ -12,8 +12,26 @@ export function HomogeneousMatrixDiagram() {
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full rounded-lg border border-[var(--panel-border)] bg-white">
         {/* Macierz T 4×4 — z kolorowymi blokami */}
         <g transform="translate(40, 30)">
-          {/* Lewa duża nawias [ */}
-          <text x={0} y={88} fontSize={140} fontFamily="serif" fill="#475569">[</text>
+          {/* Geometria wewnętrznych bloków:
+             - R: x=28..166, y=18..126
+             - t: x=172..214, y=18..126
+             - [0001]: x=28..214, y=132..164
+             Cała macierz: x=28..214, y=18..164
+             Nawiasy: 8 px po obu stronach, 4 px ponad/poniżej. */}
+
+          {/* Etykieta nad macierzą */}
+          <text x={121} y={10} textAnchor="middle" fontSize={14} fontFamily="monospace" fontWeight={700} fill="#0f172a">
+            T ∈ SE(3)
+          </text>
+
+          {/* Lewa klamra [ — SVG path, pokrywa pełną wysokość macierzy */}
+          <path
+            d="M 24 14 L 14 14 L 14 168 L 24 168"
+            fill="none"
+            stroke="#475569"
+            strokeWidth={2.5}
+            strokeLinejoin="miter"
+          />
 
           {/* Blok R 3×3 — niebieski */}
           <rect x={28} y={18} width={138} height={108} fill="#dbeafe" stroke="#0284c7" strokeWidth={1.8} rx={3} />
@@ -39,13 +57,14 @@ export function HomogeneousMatrixDiagram() {
             0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1
           </text>
 
-          {/* Prawa duża nawias ] */}
-          <text x={218} y={88} fontSize={140} fontFamily="serif" fill="#475569">]</text>
-
-          {/* Etykieta nad macierzą */}
-          <text x={121} y={10} textAnchor="middle" fontSize={14} fontFamily="monospace" fontWeight={700} fill="#0f172a">
-            T ∈ SE(3)
-          </text>
+          {/* Prawa klamra ] — SVG path symetryczna do lewej */}
+          <path
+            d="M 218 14 L 228 14 L 228 168 L 218 168"
+            fill="none"
+            stroke="#475569"
+            strokeWidth={2.5}
+            strokeLinejoin="miter"
+          />
 
           {/* Etykieta wymiaru */}
           <text x={121} y={185} textAnchor="middle" fontSize={11} fontFamily="monospace" fill="#64748b">
