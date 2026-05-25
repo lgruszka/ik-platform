@@ -350,8 +350,8 @@ export default function ModuleNonPieperIk() {
             code={`import numpy as np
 
 # Parametry DH ES5 (modified Craig) — z src/lib/robots/es5.ts:
-A3 = 0.425    # ramię (a₂ dysertacji)
-A4 = 0.395    # przedramię (a₃ dysertacji)
+A3 = 0.425    # ramię
+A4 = 0.395    # przedramię
 D4 = 0.1105   # odsadzenie przedramienia
 D5 = 0.101    # kostka nadgarstka
 D6 = 0.0765   # wystawienie końcówki
@@ -402,7 +402,7 @@ def solve_es5_ik(T_target, link_transform, inv_se3):
             theta5 = wrist_sign * base_t5
             c5, s5 = np.cos(theta5), np.sin(theta5)
 
-            # === Krok 3: θ₆ (z poprawką znaków vs dysertacja) ===
+            # === Krok 3: θ₆ — atan2(sin θ₆, cos θ₆) z komórek ⁶R₁ ===
             if abs(s5) < EPS:
                 theta6 = 0.0
             else:
@@ -477,16 +477,8 @@ import { ES5 } from "@/lib/robots/es5";
 
 const target = forwardKinematics(ES5, [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]);
 const solutions = solveEs5Analytical(target);
-// solutions: up to 8 IKSolution[] z gałęziami shoulder/elbow/wrist`}
+// solutions: do 8 rozwiązań z gałęziami shoulder/elbow/wrist`}
           />
-          <p>
-            <strong>Uwaga implementacyjna:</strong> przy bezpośrednim
-            przeniesieniu wzorów z dysertacji do kodu pojawiły się trzy bugi
-            wymagające numerycznej weryfikacji — różne znaki w eq. A.14, A.31
-            (różnice konwencji DH), oraz że eq. A.38 nie wymaga w naszej
-            geometrii uwzględnienia offsetu d₄ (wpływa tylko na y, nie na
-            trójkąt xz). Komentarze w kodzie szczegółowo opisują te poprawki.
-          </p>
         </section>
 
         <section className="prose-ik">

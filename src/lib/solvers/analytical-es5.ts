@@ -64,11 +64,7 @@ export function solveEs5Analytical(
     const c1 = Math.cos(theta1);
     const s1 = Math.sin(theta1);
 
-    // === θ₅ (eq. A.20 z poprawką znaku) ===
-    // Dysertacja: c5 = (-⁶p₀x·s1 + ⁶p₀y·c1 - d4) / d6
-    // Nasz model DH (es5.ts) ma odwrotny znak ⁶p₁y vs dysertacja, stąd:
-    //   c5 = (px·s1 - py·c1 - d4) / d6
-    // Zweryfikowane numerycznie dla q=[0.3,0.4,0.5,0.6,0.7,0.8] daje c5≈0.7648 ≈ cos(0.7) ✓
+    // === θ₅ — z y-składowej wektora ⁶p₁ wyrażonego w układzie 1 ===
     const cos5 = (px * s1 - py * c1 - ES5_D4) / ES5_D6;
     if (Math.abs(cos5) > 1 + eps) continue;
     const cos5Clamped = Math.max(-1, Math.min(1, cos5));
@@ -83,12 +79,7 @@ export function solveEs5Analytical(
       const c5 = Math.cos(theta5);
       const s5 = Math.sin(theta5);
 
-      // === θ₆ (eq. A.31 z poprawką znaków dla naszego DH) ===
-      // Dysertacja: c6 = (s1·r11 - c1·r21)/s5, s6 = (-s1·r12 + c1·r22)/s5.
-      // W naszym modelu DH elementy macierzy ⁶R₁ mają odwrotne znaki w
-      // wierszu 2 — zweryfikowane numerycznie. Stąd:
-      //   c6 = (-s1·r11 + c1·r21)/s5
-      //   s6 = ( s1·r12 - c1·r22)/s5
+      // === θ₆ — z komórek [1][0] i [1][1] macierzy ⁶R₁ ===
       let theta6: number;
       if (Math.abs(s5) < eps) {
         theta6 = 0;
@@ -98,11 +89,7 @@ export function solveEs5Analytical(
         theta6 = Math.atan2(sin6, cos6);
       }
 
-      // === Wylicz T_1_4 przez mnożenie macierzy (eq. A.32 z prawidłową kolejnością) ===
-      // T_1_4 = (T_0_1)⁻¹ · T_0_6 · (T_5_6)⁻¹ · (T_4_5)⁻¹
-      // UWAGA: w dysertacji eq. A.32 ma kolejność (T_4_5)⁻¹·(T_5_6)⁻¹, ale to
-      // jest typo. Aby skompensować łańcuch T_0_6 = ...·T_4_5·T_5_6, trzeba
-      // najpierw odwrócić T_5_6 (cofnięcie do ogniwa 5), potem T_4_5 (do 4).
+      // === T_1_4 przez mnożenie macierzy (cofnięcie przez T_5_6 i T_4_5) ===
       const T_0_1 = linkTransform(ES5.convention, ES5.dh[0], theta1);
       const T_4_5 = linkTransform(ES5.convention, ES5.dh[4], theta5);
       const T_5_6 = linkTransform(ES5.convention, ES5.dh[5], theta6);
@@ -116,16 +103,12 @@ export function solveEs5Analytical(
       // p1y_4 powinien być stały (≈ -d4 w konwencji) — ignorowany
       const p1z_4 = T_1_4[2][3];
 
-      // === θ₃ (twierdzenie cosinusów w płaszczyźnie x-z układu 1) ===
-      // KLUCZ: d₄ wpływa wyłącznie na y-składową ⁴p₁ (przez Rx(π/2) staje się -d₄)
-      // i NIE wchodzi do trójkąta bark-łokieć w pionowej płaszczyźnie xz.
-      // Stąd zwykły 2R-planarny wzór:
-      //   |⁴p₁|²_xz = a₂² + a₃² + 2·a₂·a₃·cos(θ₃)
+      // === θ₃ — twierdzenie cosinusów w płaszczyźnie x-z układu 1 ===
+      // Trójkąt 2R: a₂ (ramię) i a₃ (przedramię). Składowa y wektora ⁴p₁
+      // jest stała (= -d₄) i nie wchodzi do trójkąta.
       //   cos(θ₃) = (p1x² + p1z² - a₂² - a₃²) / (2·a₂·a₃)
-      // To uproszczenie względem dysertacji, gdzie d₄ jest mylnie wciągnięte
-      // do równań trójkąta — w naszej kalkulacji okazało się niepotrzebne.
       const a2 = ES5_A3; // ramię
-      const a3 = ES5_A4; // przedramię (bez offsetu d₄)
+      const a3 = ES5_A4; // przedramię
       const p1norm2 = p1x_4 * p1x_4 + p1z_4 * p1z_4;
       const cos3 = (p1norm2 - a2 * a2 - a3 * a3) / (2 * a2 * a3);
       if (Math.abs(cos3) > 1 + eps) continue;

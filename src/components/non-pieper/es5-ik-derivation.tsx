@@ -105,10 +105,8 @@ theta1_candidates = [
         <MathBlock tex="\boxed{\;\theta_5 = \pm\arccos\!\Big(\tfrac{-{}^6p_{0x}\,s_1 + {}^6p_{0y}\,c_1 - d_4}{d_6}\Big)\;} \qquad \text{(eq. A.20)}" />
         <PythonStep
           label="Python · θ₅"
-          caption="dwie gałęzie wrist (z korektą znaku — patrz solver TS)"
-          code={`# UWAGA: w naszym DH znak licznika jest odwrotny niż w dysertacji.
-# Zweryfikowane numerycznie: c5 = (px·s1 - py·c1 - d4) / d6
-for theta1, shoulder in theta1_candidates:
+          caption="dwie gałęzie wrist (flip/noflip)"
+          code={`for theta1, shoulder in theta1_candidates:
     c1, s1 = np.cos(theta1), np.sin(theta1)
     cos5 = (px * s1 - py * c1 - D4) / D6
     if abs(cos5) > 1:
@@ -145,10 +143,8 @@ for theta1, shoulder in theta1_candidates:
         <MathBlock tex="\boxed{\;\theta_6 = \mathrm{atan2}\!\Big(\tfrac{-s_1 r_{12} + c_1 r_{22}}{s_5},\; \tfrac{s_1 r_{11} - c_1 r_{21}}{s_5}\Big)\;} \qquad \text{(eq. A.31)}" />
         <PythonStep
           label="Python · θ₆"
-          caption="z poprawką znaków dla naszego DH (sin/cos zamienione)"
-          code={`# Znowu nasza konwencja DH wymaga odwrotnych znaków vs dysertacja.
-# Zweryfikowane numerycznie: c6 = (-s1·r11 + c1·r21)/s5, s6= ( s1·r12 - c1·r22)/s5
-c5, s5 = np.cos(theta5), np.sin(theta5)
+          caption="atan2(sin θ₆, cos θ₆) z komórek macierzy ⁶R₁"
+          code={`c5, s5 = np.cos(theta5), np.sin(theta5)
 r11, r12 = R[0, 0], R[0, 1]
 r21, r22 = R[1, 0], R[1, 1]
 
@@ -181,17 +177,16 @@ else:
         <MathBlock tex="\boxed{\;\theta_3 = \pm\arccos\!\Big(\tfrac{-a_2^2 - a_3^2 + ({}^4p_{1x})^2 + ({}^4p_{1z})^2}{2 a_2 a_3}\Big)\;} \qquad \text{(eq. A.38)}" />
         <PythonStep
           label="Python · θ₃"
-          caption="numeryczne T_1_4 → trójkąt 2R w płaszczyźnie xz"
-          code={`# Wylicz T_1_4 = (T_0_1)^-1 · target · (T_5_6)^-1 · (T_4_5)^-1
-# (UWAGA: kolejność macierzy odwrotnych — patrz solver TS)
-T01 = link_transform(0, theta1)          # macierze DH wcześniej zdefiniowane
+          caption="trójkąt 2R w płaszczyźnie xz (składowa y wektora ⁴p₁ stała = -d₄)"
+          code={`# Wylicz T_1_4 = (T_0_1)^-1 · T_target · (T_5_6)^-1 · (T_4_5)^-1
+T01 = link_transform(0, theta1)
 T45 = link_transform(4, theta5)
 T56 = link_transform(5, theta6)
 T14 = inv_se3(T01) @ T_target @ inv_se3(T56) @ inv_se3(T45)
 p1x_4, _, p1z_4 = T14[:3, 3]
 
-# Klasyczny 2R-planarny: d₄ wpływa tylko na y, NIE wchodzi do trójkąta xz
-a2, a3 = A3, A4                          # uwaga: zmiana nazw a→A!
+# Twierdzenie cosinusów dla trójkąta 2R w płaszczyźnie xz:
+a2, a3 = A3, A4                          # ramię i przedramię
 p1n2 = p1x_4**2 + p1z_4**2
 cos3 = (p1n2 - a2**2 - a3**2) / (2 * a2 * a3)
 if abs(cos3) > 1:
@@ -220,9 +215,8 @@ for elbow_sign in (+1, -1):
         <MathBlock tex="\boxed{\;\theta_2 = \mathrm{atan2}({}^4p_{1x}, {}^4p_{1z}) - \arcsin\!\Big(\tfrac{a_3 \sin\beta}{|{}^4p_1|}\Big)\;} \qquad \text{(eq. A.43)}" />
         <PythonStep
           label="Python · θ₂"
-          caption="prostszy układ liniowy z K=a₂+a₃·c₃, M=a₃·s₃ niż eq. A.43"
-          code={`# Z układu p1x = K·c2 - M·s2, p1z = K·s2 + M·c2:
-c3, s3 = np.cos(theta3), np.sin(theta3)
+          caption="rozwiązanie układu liniowego p1x = K·c2 − M·s2, p1z = K·s2 + M·c2"
+          code={`c3, s3 = np.cos(theta3), np.sin(theta3)
 K  = a2 + a3 * c3
 Mt = a3 * s3
 theta2 = np.arctan2(K * p1z_4 - Mt * p1x_4,
@@ -245,10 +239,8 @@ theta2 = np.arctan2(K * p1z_4 - Mt * p1x_4,
         <MathBlock tex="\boxed{\;\theta_4 = \mathrm{atan2}(\sin\theta_4,\; \cos\theta_4)\;} \qquad \text{(eq. A.46)}" />
         <PythonStep
           label="Python · θ₄"
-          caption="prościej numerycznie z elementu macierzy T_3_4 niż z eq. A.45"
-          code={`# T_3_4 = (T_0_3)^-1 · target · (T_5_6)^-1 · (T_4_5)^-1
-# Z konwencji DH (Craig, α₃=0): T_3_4[0][0]=cos θ₄, T_3_4[0][1]=-sin θ₄
-T12 = link_transform(1, theta2)
+          caption="odczyt z elementów macierzy T_3_4 (α₃=0 → cos θ₄ w [0,0], −sin θ₄ w [0,1])"
+          code={`T12 = link_transform(1, theta2)
 T23 = link_transform(2, theta3)
 T03 = T01 @ T12 @ T23
 T34 = inv_se3(T03) @ T_target @ inv_se3(T56) @ inv_se3(T45)
