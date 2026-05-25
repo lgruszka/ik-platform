@@ -225,9 +225,9 @@ return  q  // osiągnięto limit iteracji bez zbieżności`}</code></pre>
               problem. Ratunek: tłumienie (DLS) albo line-search.
             </li>
             <li>
-              <strong>Oscylacje</strong> — solver skacze w okolicy rozwiązania
-              zamiast wpadać do niego. Typowe dla Jacobian Transpose ze zbyt
-              dużym <M tex="\alpha" />, albo metod bez adaptacyjnego kroku.
+              <strong>Oscylacje</strong> — solver oscyluje w okolicy rozwiązania
+              zamiast w nie wchodzić. Typowe dla Jacobian Transpose ze zbyt
+              dużym <M tex="\alpha" /> albo dla metod bez adaptacyjnego kroku.
             </li>
             <li>
               <strong>Stagnacja</strong> — krok staje się mikroskopijny (np.{" "}

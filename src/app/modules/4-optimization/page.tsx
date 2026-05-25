@@ -65,9 +65,9 @@ export default function Module4() {
           </p>
           <MathBlock tex="x_{k+1} = x_k - \alpha\,f'(x_k)" />
           <p>
-            <M tex="\alpha" /> to <em>długość kroku</em> (jak duże stopnie
-            stawiamy). Za małe — wolno schodzimy. Za duże — możemy przeskoczyć
-            minimum i oscylować. Strategie wyboru <M tex="\alpha" /> to bogata
+            <M tex="\alpha" /> to <em>długość kroku</em> (rozmiar pojedynczej
+            iteracji). Za małe — wolna zbieżność. Za duże — ryzyko przeskoczenia
+            minimum i oscylacji. Strategie wyboru <M tex="\alpha" /> to bogata
             część teorii optymalizacji (np. <em>Armijo line search</em>, którą
             zobaczysz niżej).
           </p>

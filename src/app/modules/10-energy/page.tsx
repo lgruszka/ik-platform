@@ -62,7 +62,7 @@ export default function Module10() {
           <p>
             Z punktu widzenia modelu energetycznego ważne są dwie wartości:
           </p>
-          <MathBlock tex="\omega_{m,i} = n_i \cdot \dot\theta_i \qquad\text{(silnik kręci się } n\times\text{ szybciej niż przegub)}" />
+          <MathBlock tex="\omega_{m,i} = n_i \cdot \dot\theta_i \qquad\text{(silnik obraca się } n\times\text{ szybciej niż przegub)}" />
           <MathBlock tex="\tau_{m,i} = \frac{\tau_i}{\eta_{r,i} \cdot n_i} \qquad\text{(eq. 6.19)}" />
           <p>
             Sprawność <M tex="\eta_r" /> nie jest stała — zależy od <em>zarówno</em>{" "}

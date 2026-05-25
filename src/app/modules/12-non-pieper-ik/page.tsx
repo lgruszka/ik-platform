@@ -65,9 +65,9 @@ export default function ModuleNonPieperIk() {
           <p>
             <strong>Praktyczna konsekwencja:</strong> projektanci robotów zwykle
             wybierają geometrię spełniającą jedną z form Piepera{" "}
-            <em>celowo</em> — żeby IK miało zamknięte rozwiązanie i biegało w µs
-            zamiast ms. Manipulatorów bez Piepera używa się rzadko (głównie
-            w eksperymentalnych systemach badawczych).
+            <em>celowo</em> — żeby IK miało zamknięte rozwiązanie i było obliczane
+            w mikrosekundach zamiast milisekundach. Manipulatory bez Piepera
+            stosuje się rzadko (głównie w eksperymentalnych systemach badawczych).
           </p>
         </StepPanel>
 
@@ -81,16 +81,30 @@ export default function ModuleNonPieperIk() {
             <em>przesunięte</em> względem siebie o niezerowy{" "}
             <M tex="d_5" /> — co oznacza że <em>nie schodzą w jednym punkcie</em>.
           </p>
-          <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--code-bg)] px-4 py-3 my-3 not-prose text-sm font-mono">
-            <p className="font-semibold mb-2 font-sans">Parametry DH UR5 (modyfikowany Craig)</p>
-            <pre className="text-xs leading-relaxed mb-0">{`i  | α_{i-1}  | a_{i-1}  | d_i     | θ_i
----|----------|----------|---------|------
-1  |    0     |    0     | 0.089   | q₁
-2  |  +π/2    |    0     |   0     | q₂
-3  |    0     | -0.425   |   0     | q₃    ← q2 ∥ q3 ∥ q4 (forma B)
-4  |    0     | -0.392   | 0.109   | q₄
-5  |  +π/2    |    0     | 0.095   | q₅    ← d_5 ≠ 0 → forma A NIE
-6  |  -π/2    |    0     | 0.082   | q₆`}</pre>
+          <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] px-4 py-3 my-3 not-prose">
+            <p className="font-semibold mb-3 text-sm">Parametry DH UR5 (modyfikowany Craig, [m, rad])</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--panel-border)] text-[var(--muted)]">
+                    <th className="text-left py-2 px-3 font-semibold w-12">i</th>
+                    <th className="text-right py-2 px-3 font-semibold"><M tex="\alpha_{i-1}" /></th>
+                    <th className="text-right py-2 px-3 font-semibold"><M tex="a_{i-1}" /></th>
+                    <th className="text-right py-2 px-3 font-semibold"><M tex="d_i" /></th>
+                    <th className="text-right py-2 px-3 font-semibold"><M tex="\theta_i" /></th>
+                    <th className="text-left py-2 px-3 font-semibold">uwagi</th>
+                  </tr>
+                </thead>
+                <tbody className="font-mono tabular-nums [&>tr]:border-b [&>tr]:border-[var(--panel-border)]/40">
+                  <tr><td className="py-1.5 px-3">1</td><td className="text-right px-3">0</td><td className="text-right px-3">0</td><td className="text-right px-3">0,089</td><td className="text-right px-3"><M tex="q_1" /></td><td className="px-3 text-xs text-[var(--muted)]">obrót podstawy</td></tr>
+                  <tr><td className="py-1.5 px-3">2</td><td className="text-right px-3"><M tex="+\pi/2" /></td><td className="text-right px-3">0</td><td className="text-right px-3">0</td><td className="text-right px-3"><M tex="q_2" /></td><td className="px-3 text-xs text-[var(--muted)]">bark</td></tr>
+                  <tr className="bg-purple-50/60 dark:bg-purple-950/20"><td className="py-1.5 px-3">3</td><td className="text-right px-3">0</td><td className="text-right px-3">−0,425</td><td className="text-right px-3">0</td><td className="text-right px-3"><M tex="q_3" /></td><td className="px-3 text-xs text-purple-700 dark:text-purple-300 font-semibold">forma B: q₂ ∥ q₃ ∥ q₄</td></tr>
+                  <tr className="bg-purple-50/60 dark:bg-purple-950/20"><td className="py-1.5 px-3">4</td><td className="text-right px-3">0</td><td className="text-right px-3">−0,392</td><td className="text-right px-3">0,109</td><td className="text-right px-3"><M tex="q_4" /></td><td className="px-3 text-xs text-[var(--muted)]">łokieć</td></tr>
+                  <tr className="bg-red-50/60 dark:bg-red-950/20"><td className="py-1.5 px-3">5</td><td className="text-right px-3"><M tex="+\pi/2" /></td><td className="text-right px-3">0</td><td className="text-right px-3">0,095</td><td className="text-right px-3"><M tex="q_5" /></td><td className="px-3 text-xs text-red-700 dark:text-red-300 font-semibold">d₅ ≠ 0 — forma A wykluczona</td></tr>
+                  <tr><td className="py-1.5 px-3">6</td><td className="text-right px-3"><M tex="-\pi/2" /></td><td className="text-right px-3">0</td><td className="text-right px-3">0,082</td><td className="text-right px-3"><M tex="q_6" /></td><td className="px-3 text-xs text-[var(--muted)]">kołnierz</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <p>
             <strong>Wniosek:</strong> dekompozycja 3+3 z M1 nie zadziała — nie
@@ -159,16 +173,33 @@ export default function ModuleNonPieperIk() {
             podobny do UR (forma B — równoległość q₂, q₃, q₄), ale ma inne
             wymiary i konwencję DH.
           </p>
-          <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--code-bg)] px-4 py-3 my-3 not-prose text-sm font-mono">
-            <p className="font-semibold mb-2 font-sans">Parametry DH ES5 (modyfikowany Craig, src/lib/robots/es5.ts)</p>
-            <pre className="text-xs leading-relaxed mb-0">{`i  | α_{i-1}  | a_{i-1}  | d_i      | θ_i
----|----------|----------|----------|------
-1  |    0     |    0     |   0      | q₁
-2  |  +π/2    |    0     |   0      | q₂
-3  |    0     | 0.425    |   0      | q₃    ← q2 ∥ q3 ∥ q4 (forma B)
-4  |    0     | 0.395    | 0.1105   | q₄
-5  |  -π/2    |    0     | 0.101    | q₅
-6  |  +π/2    |    0     | 0.0765   | q₆`}</pre>
+          <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] px-4 py-3 my-3 not-prose">
+            <p className="font-semibold mb-1 text-sm">Parametry DH ES5 (modyfikowany Craig, [m, rad])</p>
+            <p className="text-xs text-[var(--muted)] mb-3 font-mono">
+              źródło: <code>src/lib/robots/es5.ts</code>
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--panel-border)] text-[var(--muted)]">
+                    <th className="text-left py-2 px-3 font-semibold w-12">i</th>
+                    <th className="text-right py-2 px-3 font-semibold"><M tex="\alpha_{i-1}" /></th>
+                    <th className="text-right py-2 px-3 font-semibold"><M tex="a_{i-1}" /></th>
+                    <th className="text-right py-2 px-3 font-semibold"><M tex="d_i" /></th>
+                    <th className="text-right py-2 px-3 font-semibold"><M tex="\theta_i" /></th>
+                    <th className="text-left py-2 px-3 font-semibold">uwagi</th>
+                  </tr>
+                </thead>
+                <tbody className="font-mono tabular-nums [&>tr]:border-b [&>tr]:border-[var(--panel-border)]/40">
+                  <tr><td className="py-1.5 px-3">1</td><td className="text-right px-3">0</td><td className="text-right px-3">0</td><td className="text-right px-3">0</td><td className="text-right px-3"><M tex="q_1" /></td><td className="px-3 text-xs text-[var(--muted)]">obrót podstawy</td></tr>
+                  <tr><td className="py-1.5 px-3">2</td><td className="text-right px-3"><M tex="+\pi/2" /></td><td className="text-right px-3">0</td><td className="text-right px-3">0</td><td className="text-right px-3"><M tex="q_2" /></td><td className="px-3 text-xs text-[var(--muted)]">bark</td></tr>
+                  <tr className="bg-purple-50/60 dark:bg-purple-950/20"><td className="py-1.5 px-3">3</td><td className="text-right px-3">0</td><td className="text-right px-3">0,425</td><td className="text-right px-3">0</td><td className="text-right px-3"><M tex="q_3" /></td><td className="px-3 text-xs text-purple-700 dark:text-purple-300 font-semibold">forma B: q₂ ∥ q₃ ∥ q₄</td></tr>
+                  <tr className="bg-purple-50/60 dark:bg-purple-950/20"><td className="py-1.5 px-3">4</td><td className="text-right px-3">0</td><td className="text-right px-3">0,395</td><td className="text-right px-3">0,1105</td><td className="text-right px-3"><M tex="q_4" /></td><td className="px-3 text-xs text-[var(--muted)]">łokieć z odsadzeniem d₄</td></tr>
+                  <tr><td className="py-1.5 px-3">5</td><td className="text-right px-3"><M tex="-\pi/2" /></td><td className="text-right px-3">0</td><td className="text-right px-3">0,101</td><td className="text-right px-3"><M tex="q_5" /></td><td className="px-3 text-xs text-[var(--muted)]">kostka nadgarstka</td></tr>
+                  <tr><td className="py-1.5 px-3">6</td><td className="text-right px-3"><M tex="+\pi/2" /></td><td className="text-right px-3">0</td><td className="text-right px-3">0,0765</td><td className="text-right px-3"><M tex="q_6" /></td><td className="px-3 text-xs text-[var(--muted)]">kołnierz końcówki</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <p>
             <strong>Kolejność wyprowadzania współrzędnych</strong> w dysertacji:
@@ -339,10 +370,10 @@ const solutions = solveEs5Analytical(target);
           <h2>Interaktywny playground — ES5 + 8 rozwiązań IK</h2>
           <p>
             Manipuluj sliderami konfiguracji i obserwuj jednocześnie:
-            (1) poza efektora wyliczona przez FK, (2) wszystkie rozwiązania IK
-            znalezione z tej pose. Wiersz w kolorze zielonym to gałąź
-            odpowiadająca Twojej aktualnej konfiguracji (powinno być <em>zawsze</em>{" "}
-            tam — jeśli solver działa poprawnie). Pozostałe wiersze to{" "}
+            (1) pozę efektora wyliczoną przez FK, (2) wszystkie rozwiązania IK
+            znalezione z tej pozy. Wiersz w kolorze zielonym to gałąź
+            odpowiadająca aktualnej konfiguracji (powinna być <em>zawsze</em>{" "}
+            obecna, jeśli solver działa poprawnie). Pozostałe wiersze to{" "}
             <em>alternatywne konfiguracje</em> trafiające w tę samą pozę inną drogą.
           </p>
           <p>

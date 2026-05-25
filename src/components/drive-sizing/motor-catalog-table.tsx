@@ -119,13 +119,13 @@ export function MotorCatalogTable() {
       </div>
       <p className="text-xs text-[var(--muted)]">
         <strong>Kolumna „pasuje do τ_i":</strong> dla referencyjnego scenariusza
-        pick-and-place z payloadem 2 kg, lista napędów ES5 (numer τ_1…τ_6), dla
+        pick-and-place z payloadem 2 kg lista napędów ES5 (numer τ_1…τ_6), dla
         których ten model mieści wszystkie 3 wymagania (τ_peak, τ_rms, q̇_peak) z
         marginesem ≥{SAFETY}×. Zwróć uwagę: małe silniki <em>(klasa S)</em> nie
-        mieszczą się dla osi 1–2 (za małe momenty), a duże <em>(klasa L)</em>
-        są overkillem dla nadgarstka (drogie, ciężkie — dorzucają własną masę
-        do końcówki, co rekursywnie zwiększa wymagania dla osi pod nimi).
-        Klasyczne rozwiązanie cobota: <strong>3 różne klasy</strong> — L dla osi 1+2,
+        spełniają wymagań osi 1–2 (za małe momenty), a duże <em>(klasa L)</em>
+        są nadmiarowe dla nadgarstka (drogie, ciężkie — dokładają własną masę
+        do końcówki, co rekurencyjnie zwiększa wymagania dla osi poniżej).
+        Klasyczne rozwiązanie cobota: <strong>trzy różne klasy</strong> — L dla osi 1+2,
         M dla 3+4, S dla 5+6.
       </p>
     </div>

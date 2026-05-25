@@ -281,9 +281,9 @@ export function NewtonEulerSweepDiagram() {
         <span style={{ color: "#0284c7" }}>od bazy do końcówki</span> i wyliczamy{" "}
         <em>tylko kinematykę</em> (ω, ε, a, a_C) — bez ani jednej siły. Dopiero
         gdy mamy a_C dla wszystkich ogniw, wyliczamy lokalnie F_C i N_C (Newton+Euler).
-        Backward sweep idzie <span style={{ color: "#9333ea" }}>od końcówki do bazy</span>{" "}
-        i przekształca te F_C, N_C w momenty napędowe τ_i, dorzucając propagowane
-        siły od ogniwa wyższego. To rozdzielenie jest kluczem do <em>O(n)</em>{" "}
+        Backward sweep przebiega <span style={{ color: "#9333ea" }}>od końcówki do bazy</span>{" "}
+        i przekształca te F_C, N_C w momenty napędowe τ_i, uwzględniając siły
+        propagowane od ogniwa wyższego. To rozdzielenie jest kluczem do <em>O(n)</em>{" "}
         kosztu obliczeniowego.
       </p>
     </div>

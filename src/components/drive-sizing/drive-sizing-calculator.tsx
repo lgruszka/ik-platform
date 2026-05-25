@@ -275,12 +275,12 @@ export function DriveSizingCalculator() {
 
       <p className="text-xs text-[var(--muted)]">
         <strong>Eksperymentuj:</strong> zacznij od scenariusza <em>pick-place</em>,
-        payloadu 2 kg, napędu τ_2. Sprawdź który z 6 silników w katalogu daje
-        zielony werdykt — i czy zwiększenie payloadu do 5 kg „przewraca" wybór.
-        Przełącz na scenariusz <em>aggressive</em> (0.8s) — zobaczysz że napędy
-        klasy S (nadgarstek) wcześniej brakuje mocy niż momentu (P_peak czerwony,
-        τ_peak żółty). To realna pułapka projektowa — dobiera się silnik wg
-        momentu, a w trakcie testów okazuje się że ogranicza moc.
+        payload 2 kg, napęd τ_2. Sprawdź który z 6 silników w katalogu daje
+        zielony werdykt — i czy zwiększenie payloadu do 5 kg unieważnia ten wybór.
+        Przełącz na scenariusz <em>aggressive</em> (0.8 s) — zobaczysz, że w napędach
+        klasy S (nadgarstek) limitem jest moc, a nie moment (P_peak czerwony,
+        τ_peak żółty). To realna pułapka projektowa — silnik dobrany na podstawie
+        momentu okazuje się ograniczony przez moc dopiero w testach.
       </p>
     </div>
   );

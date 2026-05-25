@@ -35,13 +35,13 @@ export default function Module11() {
           <div className="rounded-lg border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/20 px-4 py-3 my-4 text-sm">
             <p className="font-semibold mb-1">Co wynika z tego modułu</p>
             <p className="text-[var(--muted)] mb-0">
-              Po przerobieniu tego modułu student potrafi: (1) wyciągnąć z trajektorii
-              4 metryki projektowe, (2) wybrać konkretny silnik+przekładnię z
-              katalogu Maxon/Kollmorgen/Harmonic Drive z odpowiednim marginesem
-              bezpieczeństwa, (3) sprawdzić czy bezwładność zredukowana nie
-              psuje pasma regulatora, (4) podać uzasadnienie wyboru w
-              dokumentacji projektowej — czyli rzeczy, których pierwsza praca
-              inżynierska po obronie zwykle wymaga w tygodniu pierwszym.
+              Po przerobieniu tego modułu student potrafi: (1) wyznaczyć z trajektorii
+              cztery metryki projektowe, (2) dobrać konkretny silnik z przekładnią
+              z katalogu Maxon/Kollmorgen/Harmonic Drive zachowując odpowiedni
+              margines bezpieczeństwa, (3) sprawdzić czy bezwładność zredukowana
+              nie ogranicza pasma regulatora, (4) uzasadnić wybór w dokumentacji
+              projektowej — czyli kompetencje, których pierwsza praca inżynierska
+              po obronie zwykle wymaga w pierwszym tygodniu.
             </p>
           </div>
         </section>
@@ -172,7 +172,7 @@ export default function Module11() {
         <StepPanel number={6} title="Sanity check: bezwładność zredukowana i pasmo regulatora">
           <p>
             Dobór samego momentu i prędkości to nie wszystko. Trzeba jeszcze
-            sprawdzić, że bezwładność zredukowana do wału silnika nie zabija
+            sprawdzić, że bezwładność zredukowana do wału silnika nie ogranicza
             osiągalnego pasma regulatora pozycyjnego. Reguła kciuka:
           </p>
           <MathBlock tex="J_{\text{red}} = J_{\text{rotor}} + \frac{J_{\text{load}}}{n^2}, \qquad \omega_{bw} \approx \sqrt{\frac{K_p}{J_{\text{red}}}}" />

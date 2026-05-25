@@ -87,7 +87,7 @@ export function NumericalExampleM9() {
             <VecRow label="Fᶜ₁" value={NUM.link1.FC} unit="N" />
           </div>
           <p className="text-[10px] text-[var(--muted)] mt-2 leading-tight">
-            ω₁ = (0, 0, q̇₁) bo pierwszy przegub kręci się wokół osi z bazy.
+            ω₁ = (0, 0, q̇₁) bo pierwszy przegub obraca się wokół osi z bazy.
             a₁ ≈ (0, 0, +g) — grawitacja w lokalnym układzie 1 (oś z₁ pokrywa
             się z osią z bazy).
           </p>

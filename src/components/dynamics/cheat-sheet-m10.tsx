@@ -32,7 +32,7 @@ export function CheatSheetM10() {
       <Row label="Krok 1 · Prędkość obrotowa silnika">
         <MathBlock tex="\omega_{m,i} = n_i \cdot \dot\theta_i" />
         <p className="text-xs text-[var(--muted)] mt-1">
-          Przekładnia harmoniczna mnoży prędkość kątową: silnik kręci się 101× szybciej
+          Przekładnia harmoniczna mnoży prędkość kątową: silnik obraca się 101× szybciej
           niż przegub, ale wytwarza 101× mniejszy moment przy danej mocy.
         </p>
       </Row>

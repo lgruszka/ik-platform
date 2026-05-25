@@ -28,8 +28,8 @@ export default function ModuleMathCompendium() {
           <div className="rounded-lg border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/20 px-4 py-3 my-4 text-sm">
             <p className="font-semibold mb-1">Wskazówka praktyczna</p>
             <p className="text-[var(--muted)] mb-0">
-              Przy pierwszym czytaniu możesz przejrzeć cały moduł raz <em>luźno</em>,
-              żeby wiedzieć co tu jest. Potem wracaj wybiórczo — np. gdy w M9
+              Przy pierwszym czytaniu możesz przejrzeć cały moduł raz <em>pobieżnie</em>,
+              żeby zorientować się w jego zawartości. Potem wracaj wybiórczo — np. gdy w M9
               zobaczysz <M tex="\boldsymbol\omega\times(I\boldsymbol\omega)" /> i
               chcesz przypomnieć sobie iloczyn wektorowy, wracaj do{" "}
               <a href="#wektory-3d" className="text-[var(--accent)] underline">sekcji „Wektory 3D"</a>.
@@ -261,7 +261,7 @@ export default function ModuleMathCompendium() {
           </p>
           <MathBlock tex="(R_2, \mathbf{t}_2) \circ (R_1, \mathbf{t}_1) = (R_2 R_1,\; R_2 \mathbf{t}_1 + \mathbf{t}_2)" />
           <p>
-            <strong>Sztuczka:</strong> dorzucamy „wirtualną" czwartą współrzędną
+            <strong>Sztuczka:</strong> dodajemy „wirtualną" czwartą współrzędną
             równą 1 i pakujemy R i t w jedną macierz 4×4. Wtedy zarówno transformacja
             punktu, jak i składanie transformacji <em>sprowadzają się do zwykłego
             mnożenia macierzy</em>:

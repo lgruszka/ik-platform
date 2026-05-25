@@ -171,7 +171,7 @@ export default function Module0() {
                 { slug: "1-analytical-walkthrough", num: "1", title: "Wyprowadzenie analityczne Pumy" },
                 { slug: "2-analytical-playground", num: "2", title: "Playground 8 rozwiązań" },
                 { slug: "8-orientations", num: "8", title: "Reprezentacje orientacji (Eulera, kwaterniony)" },
-                { slug: "7-singularities", num: "7", title: "Singularności — co się psuje i dlaczego" },
+                { slug: "7-singularities", num: "7", title: "Singularności — kiedy IK traci jednoznaczność" },
               ]}
               time="≈3-4 godziny lektury liniowej"
             />

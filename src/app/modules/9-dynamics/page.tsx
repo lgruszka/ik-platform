@@ -442,9 +442,10 @@ export default function Module9() {
             <p className="font-semibold mb-1">Notka kodowa — ε vs alpha</p>
             <p className="text-[var(--muted)] mb-0">
               W tekście używamy greckiego <M tex="\boldsymbol\varepsilon" /> (klasyczne oznaczenie
-              przyspieszenia kątowego), w kodzie TypeScript jest jako <code>alpha</code> —
-              ponieważ identyfikatory Unicode w nazwach zmiennych psują czytelność
-              i autouzupełnianie w edytorach. To samo <em>e</em>, dwie różne nazwy.
+              przyspieszenia kątowego), w kodzie TypeScript jako <code>alpha</code> —
+              ponieważ identyfikatory Unicode w nazwach zmiennych pogarszają
+              czytelność i utrudniają autouzupełnianie w edytorach. To ta sama
+              wielkość, dwie różne nazwy.
             </p>
           </div>
         </StepPanel>
@@ -621,10 +622,11 @@ export default function Module9() {
           <p>
             <strong>Wniosek dydaktyczny:</strong> NE nie jest tylko teoretycznym
             algorytmem — to <em>generator feedforward'u</em> dla każdego
-            sterownika trajektorii. Bez modelu dynamiki musimy „brutalnie"
-            przeciążać PID dużymi wzmocnieniami (i wzmacniać szum, ryzykować
-            niestabilność). Z modelem — kontroler żyje w mniejszym reżimie błędu
-            i może być bezpiecznie strojony bliżej granicy stabilności.
+            sterownika trajektorii. Bez modelu dynamiki trzeba kompensować błąd
+            agresywnymi wzmocnieniami PID (co wzmacnia szum pomiarowy i zbliża
+            układ do granicy stabilności). Z modelem regulator pracuje przy
+            znacznie mniejszych błędach śledzenia i można go bezpiecznie stroić
+            blisko optimum stabilności.
           </p>
         </StepPanel>
 

@@ -409,9 +409,9 @@ export default function Module1() {
             >
               Kąt ataku narzędzia względem osi przedramienia. Gdy{" "}
               <M tex="q_5 = 0" />, narzędzie jest „wyciągnięte" w jednej linii
-              z przedramieniem — i wtedy wpadamy w{" "}
+              z przedramieniem — wówczas występuje{" "}
               <strong>gimbal lock</strong>: osie <M tex="q_4" /> i{" "}
-              <M tex="q_6" /> pokrywają się, więc tracą niezależność.
+              <M tex="q_6" /> pokrywają się i tracą niezależność.
             </JointRolePanel>
 
             <JointRolePanel
@@ -1128,9 +1128,9 @@ const R36_00 =  c1*c23*r11 + s1*c23*r21 - s23*r31;
               <strong>Bonus geometryczny:</strong> w nadgarstku typu ZYZ
               <M tex="\;|\sin q_5|" /> to <em>długość rzutu</em> osi narzędzia
               <M tex="\hat z_6" /> na płaszczyznę prostopadłą do <M tex="\hat z_4" />.
-              Gdy ta długość spada do zera, osie <M tex="\hat z_4" /> i{" "}
-              <M tex="\hat z_6" /> stają się współliniowe — wpadamy w osobliwość
-              nadgarstka opisaną niżej.
+              Gdy ta długość maleje do zera, osie <M tex="\hat z_4" /> i{" "}
+              <M tex="\hat z_6" /> stają się współliniowe — pojawia się osobliwość
+              nadgarstka opisana niżej.
             </p>
           </div>
           <MathBlock tex="q_4 \;=\; \operatorname{atan2}(\pm R_3^6[2][2],\;\mp R_3^6[0][2])" />
@@ -1448,10 +1448,12 @@ if (sq5_abs < eps) {
             istnieje kierunek w przestrzeni <M tex="SE(3)" /> (kierunek prędkości
             efektora), w którym <em>żadna</em> kombinacja{" "}
             <M tex="\dot q_1, \dots, \dot q_6" /> nie potrafi przesunąć
-            końcówki — manipulator „zacina się" w tej osi. Dokładniejszą analizą
-            zajmuje się <a href="/modules/7-singularities">moduł 7</a>; tutaj
-            wystarczy zapamiętać, że nasz analityczny solver{" "}
-            <em>nie pada</em> w singularnościach (poza zewnętrzną łokcia, gdzie
+            końcówki — manipulator traci jeden stopień swobody w tym kierunku.
+            Dokładniejszą analizą zajmuje się{" "}
+            <a href="/modules/7-singularities">moduł 7</a>; tutaj
+            wystarczy zapamiętać, że nasz solver analityczny{" "}
+            <em>nie zawodzi numerycznie</em> w osobliwościach (poza zewnętrzną
+            łokcia, gdzie
             cel jest fizycznie nieosiągalny) — zwraca konkretne liczby, ale są
             to liczby <em>arbitralne</em> w obrębie nieskończonej rodziny
             rozwiązań i nie należy ich traktować jako „tej jedynej poprawnej"
@@ -1493,8 +1495,8 @@ if (sq5_abs < eps) {
             <em>różniczkowanie po czasie</em> i pytanie o moment napędowy w przegubach.
             Tym zajmuje się <a href="/modules/9-dynamics">moduł 9 (Dynamika odwrotna)</a> —
             algorytm Newton-Euler na trajektorii (q, q̇, q̈) → siły i momenty napędowe τ.
-            Następnie <a href="/modules/10-energy">moduł 10</a> dorzuca model elektromechaniczny
-            silnika DC i przekładni harmonicznej, dochodząc do energii cyklu transportowego.
+            Następnie <a href="/modules/10-energy">moduł 10</a> dodaje model elektromechaniczny
+            silnika DC i przekładni harmonicznej, prowadząc do energii cyklu transportowego.
           </p>
         </section>
       </div>

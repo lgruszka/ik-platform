@@ -224,10 +224,10 @@ function BackwardSweepDerivation() {
       <h4>Rekurencja w tył · siły reakcji i momenty napędowe</h4>
       <p>
         Zaczynamy od końcówki (gdzie nie ma obciążenia) i bilansujemy siły
-        ogniwo po ogniwie. Grawitację dorzucam jawnie (siła{" "}
-        <M tex="\mathbf{F}_{gi} = -m_i\,g\,\hat y" /> w środku masy każdego ogniwa)
-        — w głównym algorytmie zaszyta jest w <M tex="\mathbf{a}_C" /> przez
-        sztuczkę Craig'a, tu rozdzielam dla czytelności.
+        ogniwo po ogniwie. Grawitację uwzględniamy jawnie jako siłę{" "}
+        <M tex="\mathbf{F}_{gi} = -m_i\,g\,\hat y" /> w środku masy każdego ogniwa.
+        W głównym algorytmie jest ona zaszyta w <M tex="\mathbf{a}_C" /> przez
+        sztuczkę Craig'a — tutaj rozdzielamy dla czytelności.
       </p>
 
       <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--code-bg)] px-4 py-3 my-3 not-prose text-sm">

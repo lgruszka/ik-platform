@@ -57,8 +57,8 @@ export default function Module6() {
               To praktyczny standard.
             </li>
             <li>
-              <strong>Jacobian Transpose</strong> eksponuje swoją słabą zbieżność
-              — często wpada w 2000 iter bez trafienia tolerancji. Pokazujemy
+              <strong>Jacobian Transpose</strong> uwidacznia swoją słabą zbieżność —
+              często osiąga limit 2000 iteracji bez wejścia w tolerancję. Pokazujemy
               go jako pedagogiczne minimum, nie jako zalecaną metodę.
             </li>
             <li>

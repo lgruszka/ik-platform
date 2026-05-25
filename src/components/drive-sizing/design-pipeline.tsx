@@ -47,7 +47,7 @@ export function DesignPipelineFlowchart() {
 
     // Decyzja — czerwona (walidacja)
     { x: 310, y: DECISION_Y, w: boxW, h: DECISION_H, label: "Decyzja końcowa",
-      sub: "Czy wszystkie 4 metryki mieszczą z marginesem ≥1.5×? Czy bezwładność nie zabija pasma regulatora (≥20 Hz)? Czy budżet OK?",
+      sub: "Czy wszystkie 4 metryki mieszczą się z marginesem ≥1.5×? Czy bezwładność nie ogranicza pasma regulatora poniżej 20 Hz? Czy budżet OK?",
       color: "#dc2626", fill: "#fef2f2" },
   ];
 

@@ -153,10 +153,11 @@ export default function Module8() {
           <GimbalLockDiagram />
           <p>
             Gimbal lock w fizycznym żyroskopie utrudnia pracę pilotom (znany
-            problem w Apollo 11), w robotyce — psuje kontrolery używające
-            kątów Eulera w okolicach pitch ≈ ±90°. <strong>Lekarstwo:</strong>{" "}
-            używaj kwaternionów lub macierzy do reprezentacji wewnętrznej
-            (kąty Eulera tylko do wejścia/wyjścia z user interface).
+            problem w Apollo 11), a w robotyce destabilizuje regulatory
+            posługujące się kątami Eulera w okolicach pitch ≈ ±90°.{" "}
+            <strong>Rozwiązanie:</strong> używać kwaternionów lub macierzy rotacji
+            jako reprezentacji wewnętrznej (kąty Eulera tylko do wejścia/wyjścia
+            interfejsu użytkownika).
           </p>
         </StepPanel>
 
@@ -267,8 +268,9 @@ export default function Module8() {
             gdzie <M tex="\Omega" /> = kąt między <M tex="q_1" /> i{" "}
             <M tex="q_2" /> w 4D. Wynik: stała prędkość kątowa od początku
             do końca, krótszą stroną sfery 4D. Spróbuj zinterpolować dwie
-            orientacje suwakami w eksploratorze powyżej — kwaterniony zawsze
-            chodzą gładko, kąty Eulera zacinają się przy ±180°.
+            orientacje suwakami w eksploratorze powyżej — kwaterniony dają
+            zawsze ciągłą interpolację, natomiast kąty Eulera tracą ciągłość
+            przy ±180°.
           </p>
         </StepPanel>
 
