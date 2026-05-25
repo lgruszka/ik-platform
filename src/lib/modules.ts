@@ -126,4 +126,13 @@ export const MODULES: readonly ModuleMeta[] = [
     href: "/modules/11-drive-sizing",
     status: "w trakcie",
   },
+  {
+    slug: "12-non-pieper-ik",
+    index: 12,
+    title: "IK dla geometrii nie-pieperowskich",
+    subtitle: "Jak wyprowadzić zamkniętą IK dla manipulatorów BEZ sferycznego nadgarstka — case study UR5 (Hawkins/Kufieta) i ES5 (Załącznik A dysertacji Gruszki 2024). Plus krótko o redundancji Franka Panda.",
+    category: "analityczne",
+    href: "/modules/12-non-pieper-ik",
+    status: "w trakcie",
+  },
 ] as const;
