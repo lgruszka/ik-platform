@@ -4,6 +4,7 @@ import { StepPanel } from "@/components/walkthrough/step-panel";
 import { PieperFormsComparison } from "@/components/non-pieper/pieper-forms-comparison";
 import { Es5IkDerivation } from "@/components/non-pieper/es5-ik-derivation";
 import { Es5IkPlayground } from "@/components/non-pieper/es5-ik-playground";
+import { PythonStep } from "@/components/walkthrough/python-step";
 
 export default function ModuleNonPieperIk() {
   return (
@@ -337,25 +338,147 @@ export default function ModuleNonPieperIk() {
         </StepPanel>
 
         <section className="prose-ik">
-          <h2>Referencyjna implementacja w kodzie</h2>
+          <h2>Kompletna funkcja Python — wszystkie kroki sklejone</h2>
           <p>
-            Wzory z kroku 3 są zaimplementowane od zera w TypeScript jako{" "}
-            <code>src/lib/solvers/analytical-es5.ts</code>. Solver zwraca do 8
-            rozwiązań (shoulder × elbow × wrist) i przechodzi smoke test{" "}
-            FK→IK→FK na 5 konfiguracjach (włącznie z osobliwością nadgarstka)
-            z błędem maszynowej precyzji (~10⁻¹⁵ rad).
+            Sześć snippetów Python z kroków 1–6 wyprowadzenia powyżej, połączone
+            w jedną funkcję <code>solve_es5_ik(T_target)</code>. Zwraca listę do
+            8 rozwiązań (krotki 6 kątów), zgodnie z gałęziami shoulder × elbow × wrist.
           </p>
-          <pre><code>{`# Uruchom test:
+          <PythonStep
+            label="Python · pełna implementacja"
+            caption="kopiuj-wklej do notatnika i uruchom (wymaga numpy + funkcji DH)"
+            code={`import numpy as np
+
+# Parametry DH ES5 (modified Craig) — z src/lib/robots/es5.ts:
+A3 = 0.425    # ramię (a₂ dysertacji)
+A4 = 0.395    # przedramię (a₃ dysertacji)
+D4 = 0.1105   # odsadzenie przedramienia
+D5 = 0.101    # kostka nadgarstka
+D6 = 0.0765   # wystawienie końcówki
+EPS = 1e-9
+
+def solve_es5_ik(T_target, link_transform, inv_se3):
+    """
+    Analityczne IK dla ES5 (forma B Piepera) wg Załącznika A
+    dysertacji [Gruszka 2024].
+
+    link_transform(i, theta_i) — macierz 4×4 ⁱ⁻¹T_i z DH (Craig).
+    inv_se3(T) — szybka odwrotność SE(3): R^T blok + -R^T·t.
+    Obie funkcje musisz dostarczyć (kilka linijek każda).
+
+    Zwraca: list[tuple[float, ...]] — do 8 krotek (q1..q6).
+    """
+    R = T_target[:3, :3]
+    px, py = T_target[0, 3], T_target[1, 3]
+    r11, r12, r13 = R[0]
+    r21, r22, r23 = R[1]
+
+    # === Krok 1: θ₁ (dwie gałęzie shoulder) ===
+    p5x = px - D6 * r13
+    p5y = py - D6 * r23
+    p5xy = np.hypot(p5x, p5y)
+    if p5xy < EPS:
+        return []
+    ratio = D4 / p5xy
+    if abs(ratio) > 1:
+        return []
+    asin_val = np.arcsin(np.clip(ratio, -1, 1))
+    alpha    = np.arctan2(p5y, p5x)
+    theta1_candidates = [
+        (alpha + asin_val,           "right"),
+        (alpha + np.pi - asin_val,   "left"),
+    ]
+
+    solutions = []
+    for theta1, shoulder in theta1_candidates:
+        c1, s1 = np.cos(theta1), np.sin(theta1)
+
+        # === Krok 2: θ₅ (dwie gałęzie wrist) ===
+        cos5 = (px * s1 - py * c1 - D4) / D6
+        if abs(cos5) > 1:
+            continue
+        base_t5 = np.arccos(np.clip(cos5, -1, 1))
+        for wrist_sign in (+1, -1):
+            theta5 = wrist_sign * base_t5
+            c5, s5 = np.cos(theta5), np.sin(theta5)
+
+            # === Krok 3: θ₆ (z poprawką znaków vs dysertacja) ===
+            if abs(s5) < EPS:
+                theta6 = 0.0
+            else:
+                sin6 = ( s1 * r12 - c1 * r22) / s5
+                cos6 = (-s1 * r11 + c1 * r21) / s5
+                theta6 = np.arctan2(sin6, cos6)
+
+            # === T_1_4 numerycznie (cofamy się przez T_5_6, T_4_5) ===
+            T01 = link_transform(0, theta1)
+            T45 = link_transform(4, theta5)
+            T56 = link_transform(5, theta6)
+            T14 = inv_se3(T01) @ T_target @ inv_se3(T56) @ inv_se3(T45)
+            p1x_4, _, p1z_4 = T14[:3, 3]
+
+            # === Krok 4: θ₃ (dwie gałęzie elbow) ===
+            a2, a3 = A3, A4
+            p1n2 = p1x_4**2 + p1z_4**2
+            cos3 = (p1n2 - a2**2 - a3**2) / (2 * a2 * a3)
+            if abs(cos3) > 1:
+                continue
+            base_t3 = np.arccos(np.clip(cos3, -1, 1))
+            for elbow_sign in (+1, -1):
+                theta3 = elbow_sign * base_t3
+
+                # === Krok 5: θ₂ (z układu liniowego K·c2 - M·s2 = p1x, ...) ===
+                c3, s3 = np.cos(theta3), np.sin(theta3)
+                K  = a2 + a3 * c3
+                Mt = a3 * s3
+                theta2 = np.arctan2(K * p1z_4 - Mt * p1x_4,
+                                    K * p1x_4 + Mt * p1z_4)
+
+                # === Krok 6: θ₄ (z elementu T_3_4) ===
+                T12 = link_transform(1, theta2)
+                T23 = link_transform(2, theta3)
+                T03 = T01 @ T12 @ T23
+                T34 = inv_se3(T03) @ T_target @ inv_se3(T56) @ inv_se3(T45)
+                theta4 = np.arctan2(-T34[0, 1], T34[0, 0])
+
+                solutions.append((theta1, theta2, theta3, theta4, theta5, theta6))
+
+    return solutions`}
+          />
+          <p>
+            <strong>Co warto zauważyć:</strong> kolejność wyprowadzania współrzędnych
+            jest <em>algebraicznie wymuszona</em> — najpierw θ₁ z geometrii rzutu, potem
+            θ₅ i θ₆ z analizy macierzy <M tex="{}^6T_1" />, dopiero na końcu θ₃, θ₂, θ₄
+            z numerycznie wyliczonej <M tex="{}^4T_1" />. To <em>inna</em> kolejność niż
+            klasyczna dekompozycja 3+3 Pumy z M1 — bo geometria ES5 (forma B) wymaga
+            innego rozdzielenia.
+          </p>
+        </section>
+
+        <section className="prose-ik">
+          <h2>Referencyjna implementacja w TypeScript</h2>
+          <p>
+            Powyższy algorytm Python jest 1:1 przetłumaczony do TypeScriptu jako{" "}
+            <code>src/lib/solvers/analytical-es5.ts</code> w aplikacji. Wersja TS jest
+            używana w playgroundzie poniżej (interaktywne wyznaczanie 8 rozwiązań na
+            żywo). Przechodzi smoke test FK→IK→FK na 5 konfiguracjach z błędem
+            maszynowej precyzji (~10⁻¹⁵ rad).
+          </p>
+          <PythonStep
+            label="TypeScript"
+            caption="API solvera ES5 w aplikacji"
+            code={`# Uruchom test:
 npx tsx src/lib/solvers/__es5_smoke.ts
 
-# Use:
+# Użycie:
 import { solveEs5Analytical } from "@/lib/solvers/analytical-es5";
 import { forwardKinematics } from "@/lib/robots/dh";
 import { ES5 } from "@/lib/robots/es5";
 
 const target = forwardKinematics(ES5, [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]);
 const solutions = solveEs5Analytical(target);
-// solutions: up to 8 IKSolution[] z gałęziami shoulder/elbow/wrist`}</code></pre>
+// solutions: up to 8 IKSolution[] z gałęziami shoulder/elbow/wrist`}
+          />
           <p>
             <strong>Uwaga implementacyjna:</strong> przy bezpośrednim
             przeniesieniu wzorów z dysertacji do kodu pojawiły się trzy bugi
