@@ -19,6 +19,15 @@ export const MODULES: readonly ModuleMeta[] = [
     status: "w trakcie",
   },
   {
+    slug: "0-5-math-compendium",
+    index: 0.5,
+    title: "Kompendium matematyczne",
+    subtitle: "Skrót matematyki i mechaniki niezbędnej w pozostałych modułach: wektory, macierze, SO(3), SE(3), bryła sztywna — referencja, do której wracasz w razie potrzeby.",
+    category: "wprowadzenie",
+    href: "/modules/0-5-math-compendium",
+    status: "w trakcie",
+  },
+  {
     slug: "1-analytical-walkthrough",
     index: 1,
     title: "Wyprowadzenie analityczne",
