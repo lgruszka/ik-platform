@@ -305,13 +305,43 @@ export default function ModuleNonPieperIk() {
         </StepPanel>
 
         <section className="prose-ik">
+          <h2>Referencyjna implementacja w kodzie</h2>
+          <p>
+            Wzory z kroku 3 są zaimplementowane od zera w TypeScript jako{" "}
+            <code>src/lib/solvers/analytical-es5.ts</code>. Solver zwraca do 8
+            rozwiązań (shoulder × elbow × wrist) i przechodzi smoke test{" "}
+            FK→IK→FK na 5 konfiguracjach (włącznie z osobliwością nadgarstka)
+            z błędem maszynowej precyzji (~10⁻¹⁵ rad).
+          </p>
+          <pre><code>{`# Uruchom test:
+npx tsx src/lib/solvers/__es5_smoke.ts
+
+# Use:
+import { solveEs5Analytical } from "@/lib/solvers/analytical-es5";
+import { forwardKinematics } from "@/lib/robots/dh";
+import { ES5 } from "@/lib/robots/es5";
+
+const target = forwardKinematics(ES5, [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]);
+const solutions = solveEs5Analytical(target);
+// solutions: up to 8 IKSolution[] z gałęziami shoulder/elbow/wrist`}</code></pre>
+          <p>
+            <strong>Uwaga implementacyjna:</strong> przy bezpośrednim
+            przeniesieniu wzorów z dysertacji do kodu pojawiły się trzy bugi
+            wymagające numerycznej weryfikacji — różne znaki w eq. A.14, A.31
+            (różnice konwencji DH), oraz że eq. A.38 nie wymaga w naszej
+            geometrii uwzględnienia offsetu d₄ (wpływa tylko na y, nie na
+            trójkąt xz). Komentarze w kodzie szczegółowo opisują te poprawki.
+          </p>
+        </section>
+
+        <section className="prose-ik">
           <h2>Co dalej</h2>
           <ul>
             <li>
-              Wyprowadzenia z tego modułu mogą być przepisane do{" "}
-              <code>src/lib/solvers/es5-analytical.ts</code> (analogicznie do
-              <code> puma560-analytical.ts</code> z M1) jako referencyjna
-              implementacja IK ES5 — byłby to drugi solver analityczny w platformie.
+              Solver ES5 (<code>analytical-es5.ts</code>) jest gotowy — może
+              być teraz wpięty do{" "}
+              <a href="/modules/6-benchmark" className="text-[var(--accent)] underline">M6 (Benchmark)</a>{" "}
+              jako drugi analityk obok Pumy.
             </li>
             <li>
               <a href="/modules/3-jacobian" className="text-[var(--accent)] underline">M3 (Jakobianowe)</a>{" "}
