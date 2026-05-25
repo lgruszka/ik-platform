@@ -8,6 +8,206 @@ export default function Module0() {
     <>
       <ModuleHeader slug="0-intro" />
       <div className="px-8 py-8 max-w-5xl space-y-10">
+
+        {/* === SEKCJA 1: PO CO IK? — motywacja zanim wchodzimy w matematykę === */}
+        <section className="prose-ik">
+          <h2>Po co właściwie potrzebujemy odwrotnej kinematyki?</h2>
+          <p>
+            Wyobraź sobie, że pokazujesz palcem punkt w przestrzeni i mówisz
+            robotowi: „chwyć to". Człowiek robi to bez myślenia — mózg
+            automatycznie znajduje konfigurację ramienia, dłoni i palców. Robot
+            potrzebuje <strong>tłumacza</strong> między „gdzie ma być końcówka" a
+            „jakie kąty muszą przyjąć przeguby" — i tym tłumaczem jest właśnie
+            algorytm kinematyki odwrotnej (IK).
+          </p>
+          <p>
+            Bez IK żadna z poniższych aplikacji nie działa:
+          </p>
+          <div className="not-prose grid grid-cols-1 md:grid-cols-2 gap-3 my-4">
+            <UseCase
+              icon="⚙️"
+              title="Programowanie ścieżki przemysłowej"
+              body={`Spawanie karoserii, lakierowanie, montaż PCB. Inżynier projektuje ścieżkę w przestrzeni 3D (CAD); IK przelicza ją na sekwencję konfiguracji przegubów. Bez tego programowanie byłoby ręczne — przegub po przegubie.`}
+            />
+            <UseCase
+              icon="✋"
+              title="Lead-through teaching"
+              body={`Operator prowadzi rękę cobota (np. UR, Franka) do pozycji, naciska „zapisz”. Robot zapamiętuje nie tylko pozę końcówki, ale całą konfigurację — IK jest niezbędne by odtworzyć ruch z innej startowej pozycji.`}
+            />
+            <UseCase
+              icon="🥽"
+              title="Teleoperacja / VR"
+              body={`Chirurg porusza joystickiem; robot da Vinci w ciele pacjenta podąża. Rękawica VR steruje awatarem. Każdy ruch dłoni → pose w SE(3) → IK robota → kąty silników. Latencja musi być < 20 ms.`}
+            />
+            <UseCase
+              icon="📦"
+              title="Pick-and-place z wizją"
+              body={`Kamera wykrywa pozycję paczki na taśmie → IK liczy konfigurację → robot chwyta. Kluczowe w logistyce (Amazon, DHL) i sortowniach żywności. Wymaga IK uruchamianego setki razy na sekundę.`}
+            />
+            <UseCase
+              icon="🎮"
+              title="Animacja postaci w grach"
+              body={`Postać podnosi przedmiot, otwiera drzwi, opiera rękę o ścianę. Inverse Kinematics w silnikach gier (Unreal, Unity) ustawia ramię, żeby dłoń trafiła w cel — bez ręcznej animacji każdego klatki.`}
+            />
+            <UseCase
+              icon="🦾"
+              title="Robotyka kosmiczna i podwodna"
+              body={`Ramię na Międzynarodowej Stacji Kosmicznej (Canadarm2) albo na ROV-ie. Operator widzi tylko widok z kamery; klika punkt w przestrzeni; IK przekształca to na ruch przegubów w stanie nieważkości / pod wodą.`}
+            />
+          </div>
+          <p>
+            Każda z tych aplikacji ma własne wymagania: szybkość (gry, VR),
+            niezawodność (medycyna), powtarzalność (przemysł). Stąd różne
+            metody IK — i stąd ten moduł. <em>Nie ma jednego algorytmu „najlepszego" —
+            jest algorytm najlepszy do Twojego problemu.</em>
+          </p>
+        </section>
+
+        {/* === SEKCJA 2: CZYM JEST PUMA 560 — historia + dlaczego dydaktyczna === */}
+        <section className="prose-ik">
+          <h2>Czym jest PUMA 560 i dlaczego cały kurs jej używa?</h2>
+          <p>
+            Wszystkie moduły 0–7 pracują na jednym konkretnym robocie:{" "}
+            <strong>PUMA 560</strong>. Wybór nie jest przypadkowy — to{" "}
+            <em>klasyczny</em> manipulator, którego każdy podręcznik robotyki
+            używa jako modelu referencyjnego. Krótko, dlaczego:
+          </p>
+
+          <CommonsImage
+            src="/images/ik/puma-spherical-wrist.jpg"
+            alt="PUMA 560 — robot przemysłowy o sześciu stopniach swobody, klasyczny obiekt badawczy w robotyce"
+            caption="PUMA 560 w laboratorium NASA Ames Research Center (1990). Charakterystyczny kształt antropomorficzny: ramię, łokieć, sferyczny nadgarstek — geometria odpowiadająca ludzkiej ręce, dzięki czemu wzory IK dają się wyprowadzić ręcznie."
+            author="NASA / Dominic Hart"
+            license="Public Domain"
+            sourceUrl="https://commons.wikimedia.org/wiki/File:Puma_Robotic_Arm_-_GPN-2000-001817.jpg"
+            height={380}
+          />
+
+          <h3>Krótka historia</h3>
+          <ul>
+            <li>
+              <strong>1969</strong> — Victor Scheinman buduje na Uniwersytecie Stanforda
+              „Stanford Arm" (poprzednik PUMA), pierwszy elektryczny manipulator komputerowo
+              sterowany przeznaczony do prac montażowych.
+            </li>
+            <li>
+              <strong>1978</strong> — firma Unimation (założona przez Josepha Engelbergera,
+              „ojca robotyki") wprowadza komercyjnie <em>PUMA</em> —{" "}
+              <em>Programmable Universal Machine for Assembly</em>. Główny klient: General Motors,
+              z myślą o linii montażowej.
+            </li>
+            <li>
+              <strong>Lata 80.–90.</strong> — dominacja na liniach motoryzacyjnych w USA i Europie.
+              Setki tysięcy sztuk w produkcji.
+            </li>
+            <li>
+              <strong>Dzisiaj</strong> — wycofana z produkcji nowych jednostek, ale pozostaje{" "}
+              <strong>kanonicznym przykładem dydaktycznym</strong> w każdym podręczniku robotyki
+              (Craig, Spong, Siciliano, Murray–Li–Sastry). Niemal każda praca o IK manipulatora
+              6-DOF pokazuje wyniki na Pumie.
+            </li>
+          </ul>
+
+          <h3>Dlaczego idealna jako przykład dydaktyczny</h3>
+          <div className="not-prose grid grid-cols-1 md:grid-cols-2 gap-3 my-4">
+            <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] p-4 text-sm">
+              <p className="font-semibold mb-1">🎯 Spełnia formę A warunku Piepera</p>
+              <p className="text-[var(--muted)] mb-0">
+                Osie trzech ostatnich przegubów przecinają się w jednym punkcie (środek
+                nadgarstka). Dzięki temu IK rozpada się na dwa łatwiejsze podproblemy 3-DOF:
+                pozycja i orientacja. <em>Da się wyprowadzić ręcznie</em> w jeden wykład.
+              </p>
+            </div>
+            <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] p-4 text-sm">
+              <p className="font-semibold mb-1">🧬 Geometria antropomorficzna</p>
+              <p className="text-[var(--muted)] mb-0">
+                Bark (q₁ — obrót talii, q₂ — podniesienie), łokieć (q₃), nadgarstek sferyczny
+                (q₄ q₅ q₆) — odwzorowuje strukturę ludzkiego ramienia. Intuicje geometryczne
+                z własnego ciała przekładają się 1:1 na konfiguracje robota.
+              </p>
+            </div>
+            <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] p-4 text-sm">
+              <p className="font-semibold mb-1">📐 8 rozwiązań na każdą pozę</p>
+              <p className="text-[var(--muted)] mb-0">
+                shoulder L/R × elbow up/down × wrist flip/no-flip. Idealna ilustracja
+                <em> wielokrotności rozwiązań IK</em> — fundamentalnej trudności, której
+                nie da się obejść w żadnym manipulatorze 6-DOF.
+              </p>
+            </div>
+            <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] p-4 text-sm">
+              <p className="font-semibold mb-1">⚠️ Wszystkie pułapki na małym przykładzie</p>
+              <p className="text-[var(--muted)] mb-0">
+                Singularności (oś 1 nad bazą, gimbal lock w nadgarstku), problemy wyboru
+                gałęzi rozwiązania, ograniczenia zasięgu. Wszystko widać dla 6 osi — łatwiej
+                niż na 7-DOF France czy redundantnych ramionach kosmicznych.
+              </p>
+            </div>
+          </div>
+
+          <p>
+            <strong>Co robimy w innych modułach:</strong> M9–M11 (dynamika, silnik DC, dobór
+            napędów) korzystają z robota <a href="/modules/9-dynamics">ES5 z dysertacji
+            [Gruszka 2024]</a> — ma inną geometrię (forma B Piepera, równoległe osie q₂q₃q₄),
+            ale algorytmy dynamiki działają identycznie. Pokazujemy więc <em>dwa</em> przykłady
+            obok siebie.
+          </p>
+        </section>
+
+        {/* === SEKCJA 3: MAPA MODUŁÓW — jak korzystać dla różnych odbiorców === */}
+        <section className="prose-ik">
+          <h2>Jak korzystać z tej aplikacji — mapa modułów</h2>
+          <p>
+            Aplikacja zawiera 11 modułów, ale nie wszystkie są równie ważne dla każdego.
+            Poniżej trzy ścieżki dla różnych odbiorców — wybierz tę, która pasuje do
+            Twoich celów:
+          </p>
+
+          <div className="not-prose space-y-3 my-4">
+            <PathCard
+              role="🎓 Student ZBR / podstawowy kurs robotyki"
+              goal="Zrozumieć IK od podstaw, umieć rozwiązać dla manipulatora 6-DOF, znać klasyfikację metod"
+              path={[
+                { slug: "0-intro", num: "0", title: "Wprowadzenie (jesteś tutaj)" },
+                { slug: "1-analytical-walkthrough", num: "1", title: "Wyprowadzenie analityczne Pumy" },
+                { slug: "2-analytical-playground", num: "2", title: "Playground 8 rozwiązań" },
+                { slug: "8-orientations", num: "8", title: "Reprezentacje orientacji (Eulera, kwaterniony)" },
+                { slug: "7-singularities", num: "7", title: "Singularności — co się psuje i dlaczego" },
+              ]}
+              time="≈3-4 godziny lektury liniowej"
+            />
+            <PathCard
+              role="🔬 Doktorant / researcher IK numerycznej"
+              goal="Porównać metody iteracyjne, optymalizacyjne i uczone na wspólnym benchmarku"
+              path={[
+                { slug: "3-jacobian", num: "3", title: "Metody Jakobianowe (Transpose, DLS, SDLS)" },
+                { slug: "4-optimization", num: "4", title: "Metody optymalizacyjne (Nelder-Mead, SQP)" },
+                { slug: "5-neural", num: "5", title: "Sieci neuronowe (MLP, MDN, IKFlow)" },
+                { slug: "6-benchmark", num: "6", title: "Wspólny benchmark dla wszystkich solverów" },
+                { slug: "7-singularities", num: "7", title: "Analiza singularności (det J, manipulability)" },
+              ]}
+              time="≈5-6 godzin · materiał na seminarium grupy badawczej"
+            />
+            <PathCard
+              role="🛠️ Inżynier projektowy / R&D producenta robotów"
+              goal="Od kinematyki do decyzji zakupowej — wybór silników i przekładni"
+              path={[
+                { slug: "9-dynamics", num: "9", title: "Dynamika odwrotna (Newton-Euler) — wyliczenie τ" },
+                { slug: "10-energy", num: "10", title: "Silnik DC i energia napędów" },
+                { slug: "11-drive-sizing", num: "11", title: "Dobór napędów — pipeline projektowy" },
+              ]}
+              time="≈2-3 godziny · pakiet decyzji projektowych"
+            />
+          </div>
+
+          <p>
+            <strong>Wszystkie moduły działają jako referencja</strong> — wracaj do nich
+            wybiórczo gdy potrzebujesz konkretnego wzoru, wyprowadzenia albo przykładu liczbowego.
+            Każdy moduł zawiera <em>ściągę formuł</em> na końcu i co najmniej jeden{" "}
+            <em>wzorzec liczbowy</em>, który możesz sprawdzić we własnej implementacji.
+          </p>
+        </section>
+
+        {/* === REZSZTA: dotychczasowa treść matematyczna === */}
         <section className="prose-ik">
           <h2>Od kinematyki prostej do odwrotnej</h2>
           <p>
@@ -168,5 +368,46 @@ export default function Module0() {
         </section>
       </div>
     </>
+  );
+}
+
+/* ───────────────────────── pomocnicze komponenty ───────────────────────── */
+
+function UseCase({ icon, title, body }: { icon: string; title: string; body: string }) {
+  return (
+    <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] p-4">
+      <p className="font-semibold mb-1 flex items-center gap-2">
+        <span className="text-xl" aria-hidden>{icon}</span>
+        <span>{title}</span>
+      </p>
+      <p className="text-sm text-[var(--muted)] mb-0">{body}</p>
+    </div>
+  );
+}
+
+type PathStep = { slug: string; num: string; title: string };
+
+function PathCard({
+  role, goal, path, time,
+}: { role: string; goal: string; path: PathStep[]; time: string }) {
+  return (
+    <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] p-4">
+      <p className="font-semibold mb-1">{role}</p>
+      <p className="text-sm text-[var(--muted)] mb-3">{goal}</p>
+      <ol className="space-y-1 list-none pl-0 mb-3">
+        {path.map((s, i) => (
+          <li key={s.slug} className="flex items-baseline gap-2 text-sm">
+            <span className="font-mono text-[var(--muted)] tabular-nums w-6">{i + 1}.</span>
+            <span className="font-mono text-[var(--muted)] text-xs px-1.5 py-0.5 rounded bg-[var(--code-bg)] mr-1">
+              M{s.num}
+            </span>
+            <a href={`/modules/${s.slug}`} className="text-[var(--accent)] underline hover:no-underline">
+              {s.title}
+            </a>
+          </li>
+        ))}
+      </ol>
+      <p className="text-xs text-[var(--muted)] italic mb-0">{time}</p>
+    </div>
   );
 }
