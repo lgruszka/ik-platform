@@ -3,6 +3,7 @@ import { Math as M, MathBlock } from "@/components/ui/math";
 import { StepPanel } from "@/components/walkthrough/step-panel";
 import { PieperFormsComparison } from "@/components/non-pieper/pieper-forms-comparison";
 import { Es5IkDerivation } from "@/components/non-pieper/es5-ik-derivation";
+import { Es5IkPlayground } from "@/components/non-pieper/es5-ik-playground";
 
 export default function ModuleNonPieperIk() {
   return (
@@ -332,6 +333,40 @@ const solutions = solveEs5Analytical(target);
             geometrii uwzględnienia offsetu d₄ (wpływa tylko na y, nie na
             trójkąt xz). Komentarze w kodzie szczegółowo opisują te poprawki.
           </p>
+        </section>
+
+        <section className="prose-ik">
+          <h2>Interaktywny playground — ES5 + 8 rozwiązań IK</h2>
+          <p>
+            Manipuluj sliderami konfiguracji i obserwuj jednocześnie:
+            (1) poza efektora wyliczona przez FK, (2) wszystkie rozwiązania IK
+            znalezione z tej pose. Wiersz w kolorze zielonym to gałąź
+            odpowiadająca Twojej aktualnej konfiguracji (powinno być <em>zawsze</em>{" "}
+            tam — jeśli solver działa poprawnie). Pozostałe wiersze to{" "}
+            <em>alternatywne konfiguracje</em> trafiające w tę samą pozę inną drogą.
+          </p>
+          <p>
+            <strong>Eksperymenty do wypróbowania:</strong>
+          </p>
+          <ul>
+            <li>
+              Ustaw <code>q ≈ home</code> i przesuń θ₅ blisko 0 — zobacz że gałęzie
+              wrist (flip/noflip) zaczynają się <em>zlewać</em>: ta sama
+              orientacja jest osiągalna z różnymi θ₄ i θ₆. To{" "}
+              <strong>singularność nadgarstka</strong> (analogiczna do tej z M1
+              dla Pumy).
+            </li>
+            <li>
+              Kliknij wiersz „shoulder=left" — robot „obraca się dookoła osi 1" w
+              symetryczną konfigurację. Ten sam TCP, zupełnie inna postawa.
+            </li>
+            <li>
+              Kliknij wiersz „elbow=down" — łokieć ląduje pod linią bark↔nadgarstek.
+              W praktyce takie konfiguracje są rzadziej używane w przemyśle
+              (mniej ergonomiczne, więcej kolizji z otoczeniem).
+            </li>
+          </ul>
+          <Es5IkPlayground />
         </section>
 
         <section className="prose-ik">
