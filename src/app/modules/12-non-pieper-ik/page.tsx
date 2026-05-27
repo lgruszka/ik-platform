@@ -484,32 +484,52 @@ const solutions = solveEs5Analytical(target);
         <section className="prose-ik">
           <h2>Interaktywny playground — ES5 + 8 rozwiązań IK</h2>
           <p>
-            Manipuluj sliderami konfiguracji i obserwuj jednocześnie:
-            (1) pozę efektora wyliczoną przez FK, (2) wszystkie rozwiązania IK
-            znalezione z tej pozy. Wiersz w kolorze zielonym to gałąź
-            odpowiadająca aktualnej konfiguracji (powinna być <em>zawsze</em>{" "}
-            obecna, jeśli solver działa poprawnie). Pozostałe wiersze to{" "}
-            <em>alternatywne konfiguracje</em> trafiające w tę samą pozę inną drogą.
+            Playground ma dwa równoległe stany:
+          </p>
+          <ul>
+            <li>
+              <strong>q (kąty przegubów)</strong> — sterowane sliderami po
+              prawej. Robot 3D pokazuje aktualną konfigurację.
+            </li>
+            <li>
+              <strong>T* (poza docelowa)</strong> — wpisywana w panelu „Poza
+              docelowa" jako pozycja (x, y, z) i orientacja RPY. Solver liczy
+              IK z T*, pokazując wszystkie konfiguracje, którymi można trafić
+              w tę pozę.
+            </li>
+          </ul>
+          <p>
+            Wskaźnik <em>TCP odbiega od T* o ... mm</em> mówi czy aktualne q
+            faktycznie trafia w T*. Kliknięcie wiersza w tabeli rozwiązań ładuje
+            wybraną gałąź do sliderów — robot ustawia się tam i wskaźnik staje się
+            zielony.
           </p>
           <p>
             <strong>Eksperymenty do wypróbowania:</strong>
           </p>
           <ul>
             <li>
-              Ustaw <code>q ≈ home</code> i przesuń θ₅ blisko 0 — zobacz że gałęzie
-              wrist (flip/noflip) zaczynają się <em>zlewać</em>: ta sama
-              orientacja jest osiągalna z różnymi θ₄ i θ₆. To{" "}
-              <strong>singularność nadgarstka</strong> (analogiczna do tej z M1
-              dla Pumy).
+              Wpisz pozycję <code>z = 0.05</code> (TCP nisko nad podłożem) —
+              większość rozwiązań prawdopodobnie odpadnie (poza zasięgiem
+              ramienia w dół). Zobaczysz krótszą listę albo komunikat „brak
+              rozwiązań".
             </li>
             <li>
-              Kliknij wiersz „shoulder=left" — robot „obraca się dookoła osi 1" w
-              symetryczną konfigurację. Ten sam TCP, zupełnie inna postawa.
+              Kliknij <strong>← zrzut FK(q)</strong>, potem przesuń sliderem
+              θ₅ blisko 0 i ponownie zrób zrzut — wokół tej pozy gałęzie wrist
+              (flip/noflip) zaczynają się <em>zlewać</em>: ta sama orientacja
+              osiągalna z różnymi θ₄ i θ₆. To <strong>singularność
+              nadgarstka</strong>.
+            </li>
+            <li>
+              Kliknij wiersz „shoulder=left" — robot „obraca się dookoła osi 1"
+              w symetryczną konfigurację. Ten sam TCP, zupełnie inna postawa
+              ramienia.
             </li>
             <li>
               Kliknij wiersz „elbow=down" — łokieć ląduje pod linią bark↔nadgarstek.
-              W praktyce takie konfiguracje są rzadziej używane w przemyśle
-              (mniej ergonomiczne, więcej kolizji z otoczeniem).
+              W praktyce takie konfiguracje są rzadziej używane przemysłowo
+              (mniej ergonomiczne, większe ryzyko kolizji z otoczeniem).
             </li>
           </ul>
           <Es5IkPlayground />
