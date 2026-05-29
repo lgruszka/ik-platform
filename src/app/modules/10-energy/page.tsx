@@ -2,9 +2,9 @@ import { ModuleHeader } from "@/components/ui/module-header";
 import { Math as M, MathBlock } from "@/components/ui/math";
 import { StepPanel } from "@/components/walkthrough/step-panel";
 import { MotorSchematic } from "@/components/dynamics/motor-schematic";
-import { EfficiencyChart } from "@/components/dynamics/efficiency-chart";
 import { PowerEnergyChart } from "@/components/dynamics/power-energy-chart";
 import { CheatSheetM10 } from "@/components/dynamics/cheat-sheet-m10";
+import { DissertationFigure } from "@/components/dynamics/dissertation-figure";
 
 export default function Module10() {
   return (
@@ -68,14 +68,36 @@ export default function Module10() {
             Sprawność <M tex="\eta_r" /> nie jest stała — zależy od <em>zarówno</em>{" "}
             prędkości obrotowej wału wejściowego silnika, jak i obciążenia momentu.
             W dysertacji aproksymowano ją wielomianem 5. stopnia z 4 krzywymi
-            referencyjnymi (Tab. 6.4):
+            referencyjnymi (Tab. 6.4). Krzywe dla wszystkich trzech grup przegubów
+            ES5 przedstawia poniższy rysunek:
           </p>
-          <EfficiencyChart />
+          <DissertationFigure
+            src="/images/dynamics/fig-6-4-gear-efficiency.png"
+            alt="Sprawność przekładni harmonicznych w funkcji obciążenia i prędkości na wejściu przekładni — krzywe dla 4 prędkości referencyjnych (500, 1000, 2000, 3500 obr/min) i 3 grup przegubów ES5"
+            figureNumber="6.4"
+            caption={
+              <>
+                Sprawność przekładni harmonicznych w funkcji obciążenia i prędkości na
+                wejściu przekładni. Trzy podpanele odpowiadają trzem grupom przegubów
+                robota ES5: <strong>(a)</strong> przeguby 4, 5, 6 (nadgarstek);{" "}
+                <strong>(b)</strong> przeguby 1 i 3 (bark+łokieć);{" "}
+                <strong>(c)</strong> przegub 2 (najbardziej obciążony). W każdym panelu
+                cztery krzywe odpowiadają prędkościom wejściowym wału silnika 500, 1000,
+                2000, 3500 obr/min. Krzyżyki na krzywych — oryginalne dane pomiarowe
+                z karty producenta, linie ciągłe — aproksymacja wielomianowa 5. stopnia.
+              </>
+            }
+            width={1560}
+            height={2050}
+            maxWidth={520}
+          />
           <p>
             <strong>Co warto zauważyć:</strong> przy małych obciążeniach (10–20%
             nominalnego) sprawność spada do 25–40% — bo straty stałe (tarcie wirnika,
             prąd magnesujący) dominują nad pożyteczną mocą. Dla optymalnej energetycznie
-            pracy chcemy obciążenia ~60–80% nominalnego — tu η najwyższe.
+            pracy chcemy obciążenia ~60–80% nominalnego — tu η najwyższe (60–80%).
+            Wyższa prędkość obrotowa = niższa sprawność (różnica ~10 punktów procentowych
+            między 500 a 3500 obr/min) — straty cieplne i wibracyjne rosną z prędkością.
           </p>
         </StepPanel>
 
