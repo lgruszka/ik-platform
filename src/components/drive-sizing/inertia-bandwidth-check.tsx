@@ -46,17 +46,28 @@ export function InertiaBandwidthCheck() {
     return points;
   }, [jRotor, jLoad, Kp]);
 
-  const fBwMax = Math.max(...curve.map((p) => p.fBw));
+  const fBwMaxRaw = Math.max(...curve.map((p) => p.fBw));
+  // Zaokrąglony górny zakres osi Y do "ładnej" wartości (1.05× max, do najbliższej
+  // dziesiątki/setki w zależności od rzędu wielkości), żeby ticki były czytelne.
+  const yAxisMax = (() => {
+    const target = fBwMaxRaw * 1.05;
+    const order = Math.pow(10, Math.floor(Math.log10(target)));
+    const step = order >= 100 ? 50 : order >= 10 ? 10 : 1;
+    return Math.ceil(target / step) * step;
+  })();
+  // Pięć znaczników rozłożonych równomiernie od 0 do yAxisMax.
+  const yTicks = Array.from({ length: 5 }, (_, i) => (yAxisMax * i) / 4);
 
   // Wykres
-  const W = 540, H = 200;
-  const pad = { l: 50, r: 20, t: 15, b: 35 };
+  const W = 540, H = 240;
+  // pad.l = 60 żeby zmieściły się trzyznakowe etykiety Hz (np. "120").
+  const pad = { l: 60, r: 24, t: 18, b: 40 };
   const plotW = W - pad.l - pad.r;
   const plotH = H - pad.t - pad.b;
   const r = (val: number) => Math.round(val * 100) / 100;
   // Skala logarytmiczna dla n
   const sx = (n: number) => pad.l + (Math.log10(n) / 3) * plotW;
-  const sy = (f: number) => pad.t + (1 - f / fBwMax) * plotH;
+  const sy = (f: number) => pad.t + (1 - f / yAxisMax) * plotH;
 
   const path = curve.map((p, i) => `${i === 0 ? "M" : "L"} ${r(sx(p.n))} ${r(sy(p.fBw))}`).join(" ");
 
@@ -155,6 +166,34 @@ export function InertiaBandwidthCheck() {
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full">
           <rect x={pad.l} y={pad.t} width={plotW} height={plotH} fill="#fafbfc" stroke="#e5e7eb" />
 
+          {/* Siatka pozioma — pomocnicze linie odpowiadające ticks osi Y */}
+          {yTicks.slice(1, -1).map((f) => (
+            <line
+              key={`gy-${f}`}
+              x1={pad.l}
+              y1={r(sy(f))}
+              x2={pad.l + plotW}
+              y2={r(sy(f))}
+              stroke="#e5e7eb"
+              strokeWidth={0.6}
+              strokeDasharray="3 3"
+            />
+          ))}
+
+          {/* Pionowa siatka na rzędach wielkości n=10, 100 */}
+          {[10, 100].map((tick) => (
+            <line
+              key={`gx-${tick}`}
+              x1={r(sx(tick))}
+              y1={pad.t}
+              x2={r(sx(tick))}
+              y2={pad.t + plotH}
+              stroke="#e5e7eb"
+              strokeWidth={0.6}
+              strokeDasharray="3 3"
+            />
+          ))}
+
           {/* Krzywa pasma */}
           <path d={path} fill="none" stroke="#0ea5e9" strokeWidth={2} />
 
@@ -172,7 +211,7 @@ export function InertiaBandwidthCheck() {
             n_opt={nOptimal.toFixed(0)}
           </text>
 
-          {/* Osie i etykiety */}
+          {/* Etykiety osi X (przełożenie n, skala log) */}
           {[1, 10, 100, 1000].map((tick) => (
             <g key={tick}>
               <line x1={r(sx(tick))} y1={pad.t + plotH} x2={r(sx(tick))} y2={pad.t + plotH + 4} stroke="#94a3b8" />
@@ -181,25 +220,102 @@ export function InertiaBandwidthCheck() {
               </text>
             </g>
           ))}
-          <text x={pad.l + plotW / 2} y={H - 5} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#475569">
+
+          {/* Etykiety osi Y (f_bw w Hz) */}
+          {yTicks.map((f) => (
+            <g key={`ly-${f}`}>
+              <line x1={pad.l - 4} y1={r(sy(f))} x2={pad.l} y2={r(sy(f))} stroke="#94a3b8" />
+              <text
+                x={pad.l - 6}
+                y={r(sy(f)) + 3}
+                textAnchor="end"
+                fontSize={9}
+                fontFamily="monospace"
+                fill="#64748b"
+              >
+                {f.toFixed(0)}
+              </text>
+            </g>
+          ))}
+
+          {/* Tytuły osi */}
+          <text x={pad.l + plotW / 2} y={H - 8} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#475569">
             przełożenie n
           </text>
-          <text transform={`rotate(-90 ${pad.l - 32} ${pad.t + plotH / 2})`}
-                x={pad.l - 32} y={pad.t + plotH / 2} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#475569">
+          <text transform={`rotate(-90 14 ${pad.t + plotH / 2})`}
+                x={14} y={pad.t + plotH / 2} textAnchor="middle" fontSize={10} fontFamily="monospace" fill="#475569">
             f_bw [Hz]
           </text>
         </svg>
       </div>
 
-      <p className="text-xs text-[var(--muted)]">
-        <strong>Praktyczna reguła:</strong> typowy regulator pozycyjny robota powinien mieć
-        pasmo ≥ 20–50 Hz (żeby reagować na zaburzenia szybciej niż 50 ms). Krzywa pokazuje
-        maksimum przy <em>n_opt</em> ≈ √(J_load/J_rotor) — to <em>impedance matching</em>.
-        Za małe n (≪ n_opt) — bezwładność obciążenia dominuje, pasmo niskie, regulator
-        wolny. Za duże n (≫ n_opt) — bezwładność wirnika dominuje, pasmo wraca do plateau,
-        ale wymagana prędkość silnika rośnie liniowo z n. Przekładnie harmoniczne typowo
-        50–160 — w okolicy n_opt dla typowych cobotów.
-      </p>
+      <div className="rounded-lg border border-[var(--panel-border)] bg-[var(--panel)] px-4 py-3 text-xs space-y-2">
+        <p className="font-semibold text-sm">Jak interpretować pasmo f_bw?</p>
+        <p className="text-[var(--muted)]">
+          <strong>Pasmo regulatora</strong> to <em>częstotliwość zaburzeń</em>, na które
+          regulator pozycyjny jeszcze potrafi reagować. Konkretnie: dla zaburzeń
+          (np. nagłej zmiany referencji, nagłej siły zewnętrznej) o częstotliwości &lt; f_bw
+          regulator je <em>kompensuje</em> — błąd śledzenia tłumi się o &gt; 50%. Dla
+          zaburzeń &gt; f_bw regulator „nie nadąża" — błąd zostaje.
+        </p>
+        <p className="text-[var(--muted)]">
+          W praktyce inżynierskiej projektant celuje w <strong>f_bw ≥ 20–50 Hz</strong> dla
+          regulatorów pozycyjnych manipulatorów przemysłowych. Niżej (~5–10 Hz) — robot wyglą­da
+          „miękko", widać wibracje w cyklach pick-and-place i błąd śledzenia trajektorii. Wyżej
+          (~100+ Hz) — robot „twardszy", ale wymaga lepszej sensoryki (enkoder z większą
+          rozdzielczością, próbkowanie kontrolera ≥ 1 kHz) i ryzykuje pobudzenie modów
+          rezonansowych konstrukcji mechanicznej (przekładnia harmoniczna ma typowo
+          rezonans 80–200 Hz — pasmo regulatora musi być wyraźnie poniżej, inaczej
+          niestabilność).
+        </p>
+        <p className="font-semibold pt-1">Reguła n_opt — impedance matching</p>
+        <p className="text-[var(--muted)]">
+          Krzywa pokazuje maksimum przy <em>n_opt</em> ≈ √(J_load/J_rotor). Za małe n —
+          bezwładność obciążenia dominuje (J_red ≈ J_load/n² → duży); pasmo niskie. Za duże n —
+          bezwładność wirnika dominuje (J_red ≈ J_rotor); pasmo wraca do plateau, ale
+          wymagana prędkość silnika rośnie liniowo z n (energia kinetyczna kwadratowo).
+          Przekładnie harmoniczne typowo 50–160 — w okolicy n_opt dla typowych cobotów.
+        </p>
+      </div>
+
+      <div className="rounded-lg border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/20 px-4 py-3 text-xs space-y-2">
+        <p className="font-semibold">
+          A masa samego silnika? <span className="text-[var(--muted)] font-normal">(domknięcie pętli projektowej)</span>
+        </p>
+        <p className="text-[var(--muted)]">
+          Dobry punkt — silnik DC + przekładnia harmoniczna typowo waży <strong>0.3–2.5 kg</strong>{" "}
+          (np. Maxon EC-i 52: 0.65 kg, Harmonic Drive CSF-25: 0.8 kg). Montuje się go na
+          poprzednim ogniwie (silnik napędzający przegub <em>i</em> siedzi na ogniwie{" "}
+          <em>i-1</em>, blisko osi przegubu i). To <strong>nieignorowalna</strong> dodatkowa masa
+          — dla przedramienia ES5 (m₃ = 2.85 kg) dodanie 1 kg silnika to +35% inercji
+          obciążenia widzianej z barku.
+        </p>
+        <p className="text-[var(--muted)]">
+          <strong>Co z tym zrobić w projekcie?</strong> Iteracyjnie:
+        </p>
+        <ol className="text-[var(--muted)] list-decimal pl-5 space-y-0.5">
+          <li>
+            Iteracja 0 — dobierz silnik dla nominalnej masy ogniw (jak teraz w tym module).
+          </li>
+          <li>
+            Iteracja 1 — dodaj masę wybranego silnika do ogniwa <em>i-1</em> (zwykle blisko
+            jego końca, niedaleko przegubu i). Przelicz NE: τ ↑ o 10–30%. Sprawdź czy
+            wybrany silnik wciąż mieści się w krzywej T-N.
+          </li>
+          <li>
+            Iteracja 2 — jeśli przeskoczył poza obwiednię, wybierz większy silnik. Powtórz
+            od kroku 1. Zwykle 2–3 iteracje wystarczają do zbieżności.
+          </li>
+        </ol>
+        <p className="text-[var(--muted)]">
+          W zaawansowanych systemach CAD (SolidWorks, Fusion 360) ten cykl jest częściowo
+          zautomatyzowany — model 3D zawiera silniki jako bryły o znanej masie i I_C,
+          parametry dynamiczne robota są przeliczane automatycznie po wymianie napędu.
+          W tym module aplikacji nie domykamy tej pętli, ale dla skali zauważ: dodanie
+          masy silnika typowo zwiększa wymagane τ o 15–25%, co przekłada się na potrzebę
+          silnika ~1 klasa wyższy (kolejny rozmiar w katalogu).
+        </p>
+      </div>
     </div>
   );
 }
